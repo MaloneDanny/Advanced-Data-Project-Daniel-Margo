@@ -1,0 +1,121 @@
+---
+title: "Data Analytics assignment"
+author: "Daniel Malone"
+date: "2023-10-26"
+output: html_document
+---
+Setup chunk
+```{r}
+library(tidyverse)
+library(readxl)
+library(haven)
+library(labelled)
+library(dplyr)
+library(tidyr)
+```
+
+Make an empty national dataframe to merge generated dataframes to
+
+```{r}
+nationalcrime = data.frame()
+
+```
+
+Clean raw data chunk (Alabama) and combine it with the nationalcrime dataset
+
+```{r}
+#read in the dataset, assigns it to it's state
+alabama = read_excel("C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/stateTables (1)/State Tables Offenses by Agency/Alabama_Offense_Type_by_Agency_2021.xls")
+
+#grabs the name of the state from the dataset
+statename = colnames(alabama)
+statename = statename[1]
+
+#removes excess columns and rows, and renames the variables
+alabama2 = alabama[-c(1,2,3),]
+colnames(alabama2) = alabama2[1,,drop=FALSE]
+alabama2 = alabama2[-c(1),]
+alabama2 = alabama2|>
+  filter(!is.na(`Agency Name`))
+#alabama2 = alabama2[-c(187),]
+
+#creates a new variable which records the state
+alabama2 = alabama2|>
+  mutate(state = statename)
+
+#fills the NA values in agency type
+alabama2 = alabama2|>
+  fill(`Agency Type`, .direction = 'down')
+
+#bind the data set to the national data set
+nationalcrime = rbind(nationalcrime, alabama2)
+
+```
+Create functions to automate the cleaning and binding
+```{r}
+cleanfunction = function(x) {
+#grabs the name of the state from the dataset
+  statename = colnames(x)
+  statename = statename[1]
+
+#removes excess columns and rows, and renames the variables
+  x2 = x[-c(1,2,3),]
+  colnames(x2) = x2[1,,drop=FALSE]
+  x2 = x2[-c(1),]
+  x2 = x2|>
+    filter(!is.na(`Agency Name`))
+
+#creates a new variable which records the state
+  x2 = x2|>
+    mutate(state = statename)
+
+#fills the NA values in agency type
+  x2 = x2|>
+    fill(`Agency Type`, .direction = 'down')
+
+  return(x2)
+}
+```
+
+Testing the data cleaning and merging function
+```{r}
+nationalcrime = data.frame()
+alabama = read_excel("C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/stateTables (1)/State Tables Offenses by Agency/Alabama_Offense_Type_by_Agency_2021.xls")
+#keeping the merge outside of the function lets the output of the cleanfunction merge into the national crime dataset.  It is important to NOT run the same dataset through the function twice, as it will combine the datasets without noting the identical information.
+nationalcrime = rbind(nationalcrime, cleanfunction(alabama))
+```
+
+Automating reading in the excel data
+```{r}
+setwd("C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/stateTables (1)/State Tables Offenses by Agency")
+file.list <- list.files(pattern='*.xlsx')
+df.list <- lapply(file.list, read_excel)
+```
+
+There is already a national data set ._.  Import that, modify the clean function, produce a cleaned national data set
+
+```{r}
+nationalcrime = read_excel("C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/stateTables (1)/State Tables Offenses by Agency/United_States_Offense_Type_by_Agency_2021.xls")
+nationalcleanfunction = function(x){
+  x2 = x[-c(1,2,3),]
+  colnames(x2) = x2[1,,drop=FALSE]
+  x2 = x2[-c(1),]
+  x2 = x2|>
+    filter(!is.na(`Agency Name`))|>
+    fill(`Agency Type`, .direction = 'down')|>
+    fill(`State`, .direction = 'down')
+  return(x2)
+}
+nationalcrime2 = data.frame(nationalcleanfunction(nationalcrime))
+
+save(nationalcrime2, file = "Cleaned National Crime Statistics.Rda")
+```
+
+Examining the crime stats
+
+```{r}
+nationalcrime2|>
+  filter(Agency.Type == "Cities")|>
+  group_by(State)|>
+  sum(Murder.and.Nonnegligent.Manslaughter)
+```
