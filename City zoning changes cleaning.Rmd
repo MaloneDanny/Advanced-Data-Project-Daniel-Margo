@@ -1,0 +1,89 @@
+---
+title: "Zoning Cleaning"
+author: "Margo La Clair"
+output: html_document
+date: "2023-10-28"
+---
+
+Libraries Needed:
+```{r}
+library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(readxl)
+library(sf)
+library(sp)
+library(ggplot2)
+```
+
+Bring in the tracked zoning spreadsheet:
+```{r}
+zoning_changes = read_csv("Zoning Tracker.csv", show_col_types = FALSE)
+```
+
+Find a good key (for later, when going from long to wide)!
+
+```{r}
+dups_zoning <- zoning_changes |>
+  count(time_status, legislative_number_policy_name) |> #Some cities had multiple policies that went into effect on the same day, so this is a good key for later. For merging datasets later on, we will do so by municipality_name
+  filter(n>1) 
+stopifnot(nrow(dups_zoning) == 0)
+```
+
+The data looks pretty darn clean, except for some issues that might cause future merging issues (accents) and splitting up the reform type into multiple columns/or making it tidy if needed.  
+
+```{r}
+str(zoning_changes)
+```
+```{r}
+#Getting rid of the accent
+zoning_changes_clean <- zoning_changes |>
+  mutate(municipality_name = str_replace_all(municipality_name,"é","e"))
+```
+
+```{r}
+#Turning into tidy format, if needed
+zoning_changes_tidy <- zoning_changes_clean |>
+  separate_rows(reform_type, sep = ",") |>
+  mutate(reform_type = str_squish(reform_type))
+```
+
+If I need to pivot wider instead of longer for merging purposes later on, the code for that is the following:
+```{r}
+zoning_changes_wide <- zoning_changes_clean |>
+  separate_longer_delim(reform_type, delim = ",") |>
+  group_by(time_status, legislative_number_policy_name) |>
+  pivot_wider(names_from = reform_type, values_from = reform_type) |> #That did something funky with multiple columns, so fixing that
+  unite(col = "TOD Reform", c("TOD Reform", "TOD Reform")) |>
+  unite(col = "Plex Reform", c("Plex Reform", "Plex Reform")) |>
+  unite(col = "Other Reform", c("Other Reform", "Other Reform"))
+  
+```
+
+And....there are dummy variables for these already! :/ Keeping above code in case we end up wanting character vars instead of dummy vars. 
+
+There is quite a bit of summary information about each proposed/enacted legislation, and I want to do just a quick read-through to make sure that these policies are not introducing/expanding SFR zoning.  
+
+```{r}
+summary <- zoning_changes |>
+  select(description)
+
+write_excel_csv2(summary, file = "Policy Descriptions.csv") #Easiest way to do a visual scan. 
+```
+
+Making a quick visual to make sure the lat/long information is sound.
+
+```{r}
+sf_test <- st_as_sf(zoning_changes, coords = c("longitude", "latitude"))
+sp::CRS(SRS_string='EPSG:4326')
+ggplot(sf_test) +
+  geom_sf(aes(color=reform_phase))
+```
+Saving the data file
+
+```{r}
+saveRDS(zoning_changes_wide, "Zoning_Cleaned.RDA")
+```
+
+
+
