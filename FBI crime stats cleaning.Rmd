@@ -163,8 +163,11 @@ namesofbigdat = colnames(bigcrimedat)
 namecheck = data.frame(namesof2022, namesofbigdat)
 namecheck$samename = ifelse(namecheck$namesof2022 == namecheck$namesofbigdat, TRUE,
                             ifelse(namecheck$namesof2022 != namecheck$namesofbigdat, FALSE, "none"))
+
 #This dataset demonstrates that, while the names are basically identical, there is some unknown difference between several of them.  Because they are for all intents and purposes, we can simply substitute the column names of the 2022 dataset, with the names of the big dataset.
 colnames(nationalcrime2022) = colnames(bigcrimedat)
 bigcrimedat = rbind(bigcrimedat, nationalcrime2022)
+
+#save as a .csv file
 write_csv(bigcrimedat, "Cleaned crime dataset, combined 2020-2022")
 ```
