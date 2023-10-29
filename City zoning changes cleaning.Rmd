@@ -91,6 +91,7 @@ Saving the data file
 
 ```{r}
 saveRDS(zoning_cleaned, "Zoning_Cleaned.RDA")
+write.csv(zoning_cleaned, "Zoning_Cleaned.csv")
 ```
 
 
