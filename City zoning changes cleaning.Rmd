@@ -83,7 +83,8 @@ Note that we only have data on crime statistics for 2020-2022, so I want to subs
 
 ```{r}
 zoning_cleaned <- zoning_changes_clean |>
-  filter(year == "2020" | year == "2021")
+  filter(year == "2021") |>
+  filter(municipality_name != "Ann Arbor") #This city had two distinct zoning laws that passed in 2021; we will be able to merge this on to the FBI crime statistics dataset. As such, we are excluding it
 ```
 
 Saving the data file
