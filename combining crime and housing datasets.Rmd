@@ -1,0 +1,19 @@
+---
+title: "Combining crime and housing datasets"
+author: "Daniel Malone"
+date: "2023-10-29"
+output: html_document
+---
+```{r}
+library(tidyverse)
+library(readxl)
+library(haven)
+library(labelled)
+library(dplyr)
+library(tidyr)
+library(writexl)
+```
+
+```{r}
+
+```
