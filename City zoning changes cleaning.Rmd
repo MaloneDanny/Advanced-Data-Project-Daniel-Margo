@@ -60,7 +60,7 @@ zoning_changes_wide <- zoning_changes_clean |>
   
 ```
 
-And....there are dummy variables for these already! :/ Keeping above code in case we end up wanting character vars instead of dummy vars. 
+And....there are dummy variables for these already! :/ Keeping above code for posterity. 
 
 There is quite a bit of summary information about each proposed/enacted legislation, and I want to do just a quick read-through to make sure that these policies are not introducing/expanding SFR zoning.  
 
@@ -74,15 +74,22 @@ write_excel_csv2(summary, file = "Policy Descriptions.csv") #Easiest way to do a
 Making a quick visual to make sure the lat/long information is sound.
 
 ```{r}
-sf_test <- st_as_sf(zoning_changes, coords = c("longitude", "latitude"))
+sf_test <- st_as_sf(zoning_changes_clean, coords = c("longitude", "latitude"))
 sp::CRS(SRS_string='EPSG:4326')
 ggplot(sf_test) +
   geom_sf(aes(color=reform_phase))
 ```
+Note that we only have data on crime statistics for 2020-2022, so I want to subset this data to only include zoning changes for years 2020 and 2021. 
+
+```{r}
+zoning_cleaned <- zoning_changes_clean |>
+  filter(year == "2020" | year == "2021")
+```
+
 Saving the data file
 
 ```{r}
-saveRDS(zoning_changes_wide, "Zoning_Cleaned.RDA")
+saveRDS(zoning_cleaned, "Zoning_Cleaned.RDA")
 ```
 
 
