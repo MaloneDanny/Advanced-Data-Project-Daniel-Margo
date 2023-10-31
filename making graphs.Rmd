@@ -12,11 +12,12 @@ library(labelled)
 library(dplyr)
 library(tidyr)
 library(writexl)
+library(ggplot2)
+library(RColorBrewer)
 ```
 
-
 ```{r}
-dat = read.csv("C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Combined Transformed Vars.csv")
+dat = read.csv("Combined Transformed Vars.csv")
 plot(dat$Ln.Pop, dat$Total.Crime.Rate)
 dat$reformed = ifelse(is.na(dat$reform_phase), 0, 1)
 dat$statereformed = ifelse(is.na(dat$Statewide.Reform), 0, 1)
@@ -33,7 +34,7 @@ unreformeddat = dat|>
 ggplot(dat, aes(x = year, y = meancrimerate, color = reformed))+
   geom_point()+
   geom_line()
-  #geom_smooth(method = 'lm', formula = meancrimerate ~ year)
+  geom_smooth(method = 'lm', formula = meancrimerate ~ year)
   
 reformedregression = lm(meancrimerate ~ year, data = reformeddat)
 unreformedregression = lm(meancrimerate ~ year, data = unreformeddat)
@@ -48,10 +49,34 @@ dat = dat|>
   mutate(statecolors = factor(ifelse(State == "MAINE", 1,
                               ifelse(State == "OREGON", 2, 0))))
 
+dat_2 = dat|> #MEL note - doing this for plot later on, we will have to clean this up later. 
+  group_by(State, year)|>
+  mutate(meanstatecrime = mean(Total.Crime.Rate))|>
+  mutate(statecolors = factor(ifelse(State == "MAINE", "Maine",
+                              ifelse(State == "OREGON", "Oregon", "No reform"))))
+
 ggplot(dat)+
   geom_point(aes(x = year, y = meanstatecrime, color = statecolors))
 
-ggplot(dat,aes(year, meanstatecrime, color = statecolors))+
-  geom_line()+
-  geom_point()
 ```
+
+Some additional experimentation: 
+
+```{r}
+plot_1 <- ggplot(dat_2, aes(year,meanstatecrime, color= State)) +  xlab("Year") + ylab("Mean Offenses") + ggtitle("Mean Offenses per State") + scale_x_continuous(breaks = 0:2100) #Just to look at the general state trends for mean state crime
+plot_1 + geom_line(aes(group=State)) + geom_point(size=1)
+#This also shows all the states that we have consistent 3-year data on. 
+```
+Okay, now to isolate the two states that we care about, making the rest of them grey.
+
+```{r}
+ref = "No reform"
+myColors <- brewer.pal(length(levels(dat_2$statecolors)),"Set1")
+names(myColors) <- levels(dat_2$statecolors)
+myColors[names(myColors)==ref] <- "grey"
+colScale <- scale_colour_manual(name = "Reform States",values = myColors)
+plot_2 <- ggplot(dat_2, aes(year,meanstatecrime, color=statecolors)) + scale_colour_manual(name = "Reform States",values = myColors) + geom_line(aes(group=State)) + geom_point(size=1) +  xlab("Year") + ylab("Mean Offenses") + ggtitle("Mean Offenses - Zoning Reform States") + scale_x_continuous(breaks = 0:2100)
+plot_2
+```
+
+
