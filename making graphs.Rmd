@@ -1,0 +1,57 @@
+---
+title: "making pie charts"
+author: "Daniel Malone"
+date: "2023-10-30"
+output: html_document
+---
+```{r}
+library(tidyverse)
+library(readxl)
+library(haven)
+library(labelled)
+library(dplyr)
+library(tidyr)
+library(writexl)
+```
+
+
+```{r}
+dat = read.csv("C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Combined Transformed Vars.csv")
+plot(dat$Ln.Pop, dat$Total.Crime.Rate)
+dat$reformed = ifelse(is.na(dat$reform_phase), 0, 1)
+dat$statereformed = ifelse(is.na(dat$Statewide.Reform), 0, 1)
+
+dat = dat|>
+  group_by(reformed, year)|>
+  mutate(meancrimerate = mean(Total.Crime.Rate))
+
+reformeddat = dat|>
+  filter(reformed == 1)
+unreformeddat = dat|>
+  filter(reformed == 0)
+
+ggplot(dat, aes(x = year, y = meancrimerate, color = reformed))+
+  geom_point()+
+  geom_line()
+  #geom_smooth(method = 'lm', formula = meancrimerate ~ year)
+  
+reformedregression = lm(meancrimerate ~ year, data = reformeddat)
+unreformedregression = lm(meancrimerate ~ year, data = unreformeddat)
+regression = lm(meancrimerate ~ year + reformed, data = dat)
+
+summary(reformedregression)
+summary(unreformedregression)
+
+dat = dat|>
+  group_by(State, year)|>
+  mutate(meanstatecrime = mean(Total.Crime.Rate))|>
+  mutate(statecolors = factor(ifelse(State == "MAINE", 1,
+                              ifelse(State == "OREGON", 2, 0))))
+
+ggplot(dat)+
+  geom_point(aes(x = year, y = meanstatecrime, color = statecolors))
+
+ggplot(dat,aes(year, meanstatecrime, color = statecolors))+
+  geom_line()+
+  geom_point()
+```
