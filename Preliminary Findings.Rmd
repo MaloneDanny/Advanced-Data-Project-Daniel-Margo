@@ -38,21 +38,28 @@ Additional dummy variables were created which reported whether the city in quest
 	
 ### V. Preliminary Plots and Remarks
 
+The following plot charts the mean total offenses per all states in our final dataset for 2020-2022. 
 
 ![](Plots/plot_all_states.png)
 
+Then, we highlight the two states (noting prior qualification about Maine) that enacted state-wide zoning reform in 2022. 
+
 ![](Plots/plot_reform_states.png)
+
+We replicate the same plots for the municipalities that enacted zoning reforms in 2021, looking at their total offense rates.
 
 ![](Plots/plot_only_reformed_cities.png)
 
+Interestingly, there seems to be a split within this group: municipalities with high and low rates. Generally, there appears to be a downwards relationship between year and offense rate in the high rate group, and an upwards relationship in the low rate group.
+
 ![](Plots/plot_reformed_cities.png)
 
+The scale in the prior plot is through off by some extreme rates (coming from small cities, where the population is low). So, the following plot puts in place scale limits - just so we can see the reform cities trends.
 
 ![This plot has scale limits in place.](Plots/plot_reformed_cities_scale.png)
-
+The above plots show an interesting split within the municipalities that enacted zoning reform. There are significant issues with the simultaneous lack and abundance of data: we have few years of crime data, and we have magnitudes more data for cities that did not enact zoning reform. We might narrow the focus down to comparing reform/non-reform cities that are geographically close to one another (identified via finding the minimal distance between spatial points), or, more generally, comparing the municipalities to their respective state trends. Within this more narrow focus, we will also want to look at the breakdown between offense types (social, property, persons) to see if there are any relationships or trends there.
 
 ### VI. References
-
 
 Anderson, James M., et al. “Reducing Crime by Shaping the Built Environment with Zoning: An Empirical Study of Los Angeles.” University of Pennsylvania Law Review, vol. 161, pp. 700-756. 
 
