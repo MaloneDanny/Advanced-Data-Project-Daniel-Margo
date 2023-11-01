@@ -30,7 +30,15 @@ date: "2023-10-31"
 	
 #### V. Preliminary Plots and Remarks
 
+![](Plots/plot_all_states.png)
 
+![](Plots/plot_reform_states.png)
+
+![](Plots/plot_only_reformed_cities.png)
+
+![](Plots/plot_reformed_cities.png)
+
+![This plot has scale limits in place.](Plots/plot_reformed_cities_scale.png)
 
 #### VI. Citations
 
