@@ -19,7 +19,7 @@ library(RColorBrewer)
 
 ```{r}
 #read in data set
-dat = read.csv("Data/Combined Transformed Vars.csv")
+dat = read.csv("Combined Transformed Vars.csv")
 #simple scatter plot of log transformed population and the total crime rate
 plot(dat$Ln.Pop, dat$Total.Crime.Rate)
 

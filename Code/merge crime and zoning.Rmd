@@ -16,8 +16,8 @@ library(writexl)
 ```
 Import Datasets
 ```{r}
-crimedat = read.csv("C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Cleaned crime dataset, combined 2020-2022")
-zonedat = read.csv("C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Zoning_Cleaned.csv")
+crimedat = read.csv("Cleaned crime dataset, combined 2020-2022")
+zonedat = read.csv("Zoning_Cleaned.csv")
 ```
 
 ```{r}
