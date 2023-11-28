@@ -3,6 +3,10 @@ library(rvest)
 library(httr)
 library(jsonlite)
 library(readxl)
+library(broom)
+library(lmtest)
+library(stargazer)
+library(memisc)
 
 dat = read.csv("Combined Transformed Vars.csv")
 
@@ -53,18 +57,18 @@ reg = lm(Total.Crime.Rate ~ reform + State - 1 + year - 1, data = dat3)
 reg14 = lm(Crimes.Property.Rate ~ reform + State - 1 + year - 1, data = dat3)
 reg15 = lm(Crimes.Persons.Rate ~ reform + State - 1 + year - 1, data = dat3)
 reg16 = lm(Crimes.Society.Rate ~ reform + State - 1 + year - 1, data = dat3)
-reg2 = lm(Total.Crime.Rate ~ reform + State - 1 + year - 1 + unemp.rate, data = dat3)
-reg3 = lm(Crimes.Property.Rate ~ reform + State - 1 + year - 1 + unemp.rate, data = dat3)
-reg4 = lm(Crimes.Persons.Rate ~ reform + State - 1 + year - 1 + unemp.rate, data = dat3)
-reg5 = lm(Crimes.Society.Rate ~ reform + State - 1 + year - 1 + unemp.rate, data = dat3)
-reg6 = lm(Total.Crime.Rate ~ reform + State - 1 + year - 1 + unemp.rate + laggedcrimerate, data = dat3)
-reg7 = lm(Crimes.Persons.Rate ~ reform + State - 1 + year - 1 + unemp.rate + laggedpersonsrate, data = dat3)
-reg8 = lm(Crimes.Property.Rate ~ reform + State - 1 + year - 1 + unemp.rate + laggedpropertyrate, data = dat3)
-reg9 = lm(Crimes.Society.Rate ~ reform + State - 1 + year - 1 + unemp.rate + laggedsocietyrate, data = dat3)
-reg10 = lm(Total.Crime.Rate ~ reform + State - 1 + year - 1 + unemp.rate + meancrimerate, data = dat3)
-reg11 = lm(Crimes.Persons.Rate ~ reform + State - 1 + year - 1 + unemp.rate + meanpersonrate, data = dat3)
-reg12 = lm(Crimes.Property.Rate ~ reform + State - 1 + year - 1 + unemp.rate + meanpropertyrate, data = dat3)
-reg13 = lm(Crimes.Society.Rate ~ reform + State - 1 + year - 1 + unemp.rate + meansocietyrate, data = dat3)
+reg2 = lm(Total.Crime.Rate ~ reform + unemp.rate+ State - 1 + year - 1 , data = dat3)
+reg3 = lm(Crimes.Property.Rate ~ reform+ unemp.rate + State - 1 + year - 1 , data = dat3)
+reg4 = lm(Crimes.Persons.Rate ~ reform+ unemp.rate + State - 1 + year - 1 , data = dat3)
+reg5 = lm(Crimes.Society.Rate ~ reform + unemp.rate+ State - 1 + year - 1 , data = dat3)
+reg6 = lm(Total.Crime.Rate ~ reform + unemp.rate + laggedcrimerate+ State - 1 + year - 1 , data = dat3)
+reg7 = lm(Crimes.Persons.Rate ~ reform + unemp.rate + laggedpersonsrate+ State - 1 + year - 1 , data = dat3)
+reg8 = lm(Crimes.Property.Rate ~ reform + unemp.rate + laggedpropertyrate+ State - 1 + year - 1 , data = dat3)
+reg9 = lm(Crimes.Society.Rate ~ reform  + unemp.rate + laggedsocietyrate+ State - 1 + year - 1, data = dat3)
+reg10 = lm(Total.Crime.Rate ~ reform + unemp.rate + meancrimerate+ State - 1 + year - 1 , data = dat3)
+reg11 = lm(Crimes.Persons.Rate ~ reform + unemp.rate + meanpersonrate+ State - 1 + year - 1 , data = dat3)
+reg12 = lm(Crimes.Property.Rate ~ reform + unemp.rate + meanpropertyrate+ State - 1 + year - 1 , data = dat3)
+reg13 = lm(Crimes.Society.Rate ~ reform + unemp.rate + meansocietyrate+ State - 1 + year - 1 , data = dat3)
 
 summary(reg) #reform on crime
 summary(reg14) #reform on property crime
@@ -82,3 +86,12 @@ summary(reg10) #reform on crime w/ unemp.rate and mean crime
 summary(reg11) #reform on person crime w/ unemp.rate and mean person crime
 summary(reg12) #reform on property crime w/ unemp.rate and mean property crime
 summary(reg13) #reform on society crime w/ unemp.rate and mean society crime
+
+write_csv(dat3, file = "Combined Unemp Crime Housing")
+
+stargazer(reg, reg2,reg6, reg10, type = "html", out = "out.html")
+stargazer(reg14, reg3, reg8, reg12, type = "html", out = "out2.html")
+stargazer(reg15, reg4, reg7, reg11, type = "html", out = "out3.html")
+stargazer(reg16, reg5, reg9, reg13, type = "html", out = "out4.html")
+
+stargazer(reg, reg2,reg6, reg10, type = "text")
