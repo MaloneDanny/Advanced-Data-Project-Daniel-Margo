@@ -50,6 +50,9 @@ dat3 = dat3|>
 
 #runs regressions, records the results, displays the results in the console
 reg = lm(Total.Crime.Rate ~ reform + State - 1 + year - 1, data = dat3)
+reg14 = lm(Crimes.Property.Rate ~ reform + State - 1 + year - 1, data = dat3)
+reg15 = lm(Crimes.Persons.Rate ~ reform + State - 1 + year - 1, data = dat3)
+reg16 = lm(Crimes.Society.Rate ~ reform + State - 1 + year - 1, data = dat3)
 reg2 = lm(Total.Crime.Rate ~ reform + State - 1 + year - 1 + unemp.rate, data = dat3)
 reg3 = lm(Crimes.Property.Rate ~ reform + State - 1 + year - 1 + unemp.rate, data = dat3)
 reg4 = lm(Crimes.Persons.Rate ~ reform + State - 1 + year - 1 + unemp.rate, data = dat3)
@@ -62,7 +65,11 @@ reg10 = lm(Total.Crime.Rate ~ reform + State - 1 + year - 1 + unemp.rate + meanc
 reg11 = lm(Crimes.Persons.Rate ~ reform + State - 1 + year - 1 + unemp.rate + meanpersonrate, data = dat3)
 reg12 = lm(Crimes.Property.Rate ~ reform + State - 1 + year - 1 + unemp.rate + meanpropertyrate, data = dat3)
 reg13 = lm(Crimes.Society.Rate ~ reform + State - 1 + year - 1 + unemp.rate + meansocietyrate, data = dat3)
+
 summary(reg) #reform on crime
+summary(reg14) #reform on property crime
+summary(reg15) #reform on persons crime
+summary(reg16) #reform on society crime
 summary(reg2) #reform on crime w/ unemp.rate
 summary(reg3) #reform on property crime w/ unemp.rate
 summary(reg4) #reform on person crime w/ unemp.rate
