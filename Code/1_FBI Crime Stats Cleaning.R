@@ -1,0 +1,156 @@
+#STEP 1: FBI Crime Stats Cleaning
+#R Script File, adapted from prior Rmarkdown file
+
+
+#Setup
+library(tidyverse)
+library(readxl)
+library(haven)
+library(labelled)
+library(dplyr)
+library(tidyr)
+library(writexl)
+
+#Make an empty national dataframe to merge generated dataframes to
+nationalcrime = data.frame()
+
+#Clean raw data chunk (Alabama) and combine it with the nationalcrime dataset
+#read in the dataset, assigns it to it's state
+alabama = read_excel("stateTables (1)/State Tables Offenses by Agency/Alabama_Offense_Type_by_Agency_2021.xls")
+
+#grabs the name of the state from the dataset
+statename = colnames(alabama)
+statename = statename[1]
+
+#removes excess columns and rows, and renames the variables
+alabama2 = alabama[-c(1,2,3),]
+colnames(alabama2) = alabama2[1,,drop=FALSE]
+alabama2 = alabama2[-c(1),]
+alabama2 = alabama2|>
+  filter(!is.na(`Agency Name`))
+#alabama2 = alabama2[-c(187),]
+
+#creates a new variable which records the state
+alabama2 = alabama2|>
+  mutate(state = statename)
+
+#fills the NA values in agency type
+alabama2 = alabama2|>
+  fill(`Agency Type`, .direction = 'down')
+
+#bind the data set to the national data set
+nationalcrime = rbind(nationalcrime, alabama2)
+
+#Create functions to automate the cleaning and binding
+cleanfunction = function(x) {
+  #grabs the name of the state from the dataset
+  statename = colnames(x)
+  statename = statename[1]
+  
+  #removes excess columns and rows, and renames the variables
+  x2 = x[-c(1,2,3),]
+  colnames(x2) = x2[1,,drop=FALSE]
+  x2 = x2[-c(1),]
+  x2 = x2|>
+    filter(!is.na(`Agency Name`))
+  
+  #creates a new variable which records the state
+  x2 = x2|>
+    mutate(state = statename)
+  
+  #fills the NA values in agency type
+  x2 = x2|>
+    fill(`Agency Type`, .direction = 'down')
+  
+  return(x2)
+}
+
+#Testing the data cleaning and merging function
+nationalcrime = data.frame()
+alabama = read_excel("stateTables (1)/State Tables Offenses by Agency/Alabama_Offense_Type_by_Agency_2021.xls")
+#keeping the merge outside of the function lets the output of the cleanfunction merge into the national crime dataset.  It is important to NOT run the same dataset through the function twice, as it will combine the datasets without noting the identical information.
+nationalcrime = rbind(nationalcrime, cleanfunction(alabama))
+
+#Automating reading in the excel data (DEPRECIATED)
+setwd("stateTables (1)/State Tables Offenses by Agency")
+file.list <- list.files(pattern='*.xlsx')
+df.list <- lapply(file.list, read_excel)
+
+#There is already a national data set ._.  Import that, modify the clean function, produce a cleaned national data set
+nationalcrime = read_excel("stateTables (1)/State Tables Offenses by Agency/United_States_Offense_Type_by_Agency_2021.xls")
+nationalcleanfunction = function(x){
+  x2 = x[-c(1,2,3),]
+  colnames(x2) = x2[1,,drop=FALSE]
+  x2 = x2[-c(1),]
+  x2 = x2|>
+    filter(!is.na(`Agency Name`))|>
+    fill(`Agency Type`, .direction = 'down')|>
+    fill(`State`, .direction = 'down')
+  x3 = x2|>
+    select(1:3)
+  x4 = x2|>
+    select(!1:3)|>
+    mutate_if(is.character, as.numeric)
+  x5 = cbind(x3,x4)
+  
+  return(x5)
+}
+
+nationalcrime2021 = nationalcleanfunction(nationalcrime)
+nationalcrime2021 = nationalcrime2021|>
+  mutate(year = 2021)
+
+
+write_csv(nationalcrime2, file = "Cleaned National Crime Statistics 2021")
+read.csv("Cleaned National Crime Statistics 2021")
+
+#Importing, cleaning, and merging for year 2020 and year 2022
+#import crime stats for 2020 and 2022
+dirtynationalcrime2022 = read_excel("stateTables 2022/United_States_Offense_Type_by_Agency_2022.xlsx")
+dirtynationalcrime2020 = read_excel("stateTables 2020/State Tables, Offenses by Agency/United_States_Offense_Type_by_Agency_2020.xls")
+
+#clean 2020 crime stats
+nationalcrime2020 = nationalcleanfunction(dirtynationalcrime2020)
+nationalcrime2020 = nationalcrime2020|>
+  mutate(year = 2020)
+
+#the layout of the 2022 crime stats is slightly different than the previous two years;  the row that would be the labels of the columns are one cell above them.  We have to copy them to the next row.
+dirtynationalcrime2022[4,1] = dirtynationalcrime2022[3,1]
+dirtynationalcrime2022[4,2] = dirtynationalcrime2022[3,2]
+dirtynationalcrime2022[4,3] = dirtynationalcrime2022[3,3]
+dirtynationalcrime2022[4,4] = dirtynationalcrime2022[3,4]
+dirtynationalcrime2022[4,5] = dirtynationalcrime2022[3,5]
+dirtynationalcrime2022[4,6] = dirtynationalcrime2022[3,6]
+dirtynationalcrime2022[4,7] = dirtynationalcrime2022[3,7]
+dirtynationalcrime2022[4,8] = dirtynationalcrime2022[3,8]
+
+#run the 2022 crime data through the cleaning function, adds a year variable and they are all 2022
+nationalcrime2022 = nationalcleanfunction(dirtynationalcrime2022)
+nationalcrime2022 = nationalcrime2022|>
+  mutate(year = 2022)
+
+bigcrimedat = rbind(nationalcrime2020, nationalcrime2021)
+#combining the 2022 data with the other combined data sets throws up an error; "names do not match previous names".  Fix the names of the other set later.
+
+#Checking which names are different, and fixing them if appropriate
+
+#First, checking the names to see if they are different
+namesof2022 = colnames(nationalcrime2022)
+namesofbigdat = colnames(bigcrimedat)
+namecheck = data.frame(namesof2022, namesofbigdat)
+namecheck$samename = ifelse(namecheck$namesof2022 == namecheck$namesofbigdat, TRUE,
+                            ifelse(namecheck$namesof2022 != namecheck$namesofbigdat, FALSE, "none"))
+
+#This dataset demonstrates that, while the names are basically identical, there is some unknown difference between several of them.  Because they are for all intents and purposes, we can simply substitute the column names of the 2022 dataset, with the names of the big dataset.
+colnames(nationalcrime2022) = colnames(bigcrimedat)
+bigcrimedat = rbind(bigcrimedat, nationalcrime2022)
+
+#save as a .csv file
+write_csv(bigcrimedat, "Cleaned crime dataset, combined 2020-2022")
+
+
+
+
+
+
+
