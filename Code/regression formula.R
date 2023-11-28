@@ -32,7 +32,7 @@ unemp3 = unemp2|>
 unemp3$year = as.factor(unemp3$year)
 dat3 = merge(dat2, unemp3)
 
-#creates lagged variables for crime rate in agencies
+#creates lagged variables for crime rate in agencies as well as average crime rate
 dat3 = dat3|>
   group_by(Agency.Name)|>
   arrange(year)|>
