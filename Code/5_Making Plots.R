@@ -1,0 +1,143 @@
+#5: Making some Pie Charts
+#Adapted from a prior Rmarkdown file
+
+#Library needed
+library(tidyverse)
+library(readxl)
+library(haven)
+library(labelled)
+library(dplyr)
+library(tidyr)
+library(writexl)
+library(ggplot2)
+library(RColorBrewer)
+#read in data set
+dat = read.csv("Combined Transformed Vars.csv")
+#simple scatter plot of log transformed population and the total crime rate
+plot(dat$Ln.Pop, dat$Total.Crime.Rate)
+
+#Create two dummy variables for whether the city had a zoning reform and whether the state had a zoning reform, 
+#respectively
+dat$reformed = factor(ifelse(is.na(dat$reform_phase), 0, 1))
+dat$reformed.cities = ifelse(is.na(dat$reform_phase), "No reform", "Reform")
+dat$statereformed = factor(ifelse(is.na(dat$Statewide.Reform), 0, 1))
+
+#creates the mean of the total crime rate based on whether the city had a zoning reform or not, and the year
+dat = dat|>
+  group_by(reformed, year)|>
+  mutate(meancrimerate = mean(Total.Crime.Rate))
+
+#create two distinct data sets based on cities that had a reform and those that did not
+reformeddat = dat|>
+  filter(reformed == 1)
+unreformeddat = dat|>
+  filter(reformed == 0)
+
+#make a plot which shows the mean crime rate of cities that reformed and cities that did not reform over time
+ggplot(dat, aes(x = year, y = meancrimerate, color = reformed))+
+  geom_point()
+
+#run a number of regressions which generate the best fit lines for the above graph and show their values
+reformedregression = lm(meancrimerate ~ year, data = reformeddat)
+unreformedregression = lm(meancrimerate ~ year, data = unreformeddat)
+regression = lm(meancrimerate ~ year + reformed, data = dat)
+summary(reformedregression)
+summary(unreformedregression)
+
+#create another mean variable, this time calculating the mean of total crime rate for each state, 
+#and then creating two separate dummy variables for the two states (still present in the dataset) 
+#which had zoning reforms in 2021
+dat = dat|>
+  group_by(State, year)|>
+  mutate(meanstatecrime = mean(Total.Crime.Rate))|>
+  mutate(statecolors = factor(ifelse(State == "MAINE", 1,
+                                     ifelse(State == "OREGON", 2, 0))))
+
+dat_2 = dat|>  
+  group_by(State, year)|>
+  mutate(meanstatecrime = mean(Total.Crime.Rate))|>
+  mutate(statecolors = factor(ifelse(State == "MAINE", "Maine",
+                                     ifelse(State == "OREGON", "Oregon", "No reform")))) #For ease of plot readability 
+
+#test - make a plot of mean total crime per state, with Maine and Oregon displayed using unique 
+#colors relative to the other states, with a line connecting them.
+ggplot(dat,aes(year, meanstatecrime, color = statecolors))+
+  geom_line()+
+  geom_point()
+
+#Generating some plots: State-reform. 
+plot_1 <- ggplot(dat_2, aes(year,meanstatecrime, color= State)) +  
+  xlab("Year") + ylab("Mean Offenses") + 
+  ggtitle("Mean Offenses per State") + 
+  scale_x_continuous(breaks = 0:2100) #Just to look at the general state trends for mean state crime
+
+plot_all_states <- plot_1 + geom_line(aes(group=State)) + geom_point(size=1) #Adding points and lines between points
+
+plot_all_states
+ggsave("Plots/plot_all_states.png")
+#This also shows all the states that we have consistent 3-year data on. 
+
+#Okay, now to isolate the two states that we care about, making the rest of them grey.
+#Reordering the factor levels of 'statecolors' (for the sake of the plot)
+dat_2$statecolors <- factor(dat_2$statecolors, levels = c("Maine", "Oregon", "No reform"))
+levels(dat_2$statecolors)
+
+#Generating a plot that has the non-reform states in grey
+ref = "No reform"
+adjustcolor("grey", alpha.f = .2) #Making 'grey' transparent for the plot
+myColors <- brewer.pal(length(levels(dat_2$statecolors)),"Set1")
+names(myColors) <- levels(dat_2$statecolors)
+myColors[names(myColors)==ref] <- "#BEBEBE26" #If not a reform state, then assign grey color
+colScale <- scale_colour_manual(name = "Reform States",values = myColors)
+
+#Plot!
+plot_reform_states <- ggplot(dat_2, aes(year,meanstatecrime, color=statecolors)) + 
+  scale_colour_manual(name = "Reform States",values = myColors) + 
+  geom_line(aes(group=State)) + 
+  geom_point(aes(group=State),size=2) +  
+  xlab("Year") + ylab("Mean Offenses") + 
+  ggtitle("Mean Offenses - Zoning Reform States") + 
+  scale_x_continuous(breaks = 0:2100)
+plot_reform_states
+ggsave("Plots/plot_reform_states.png")
+
+#Generating some plots: Municipal-level reform. 
+#General plot for just the municipalities that had zoning reforms
+plot_2 <- ggplot(reformeddat, aes(year,Total.Crime.Rate, color= Agency.Name)) +  
+  xlab("Year") + ylab("Total Offense Rate") + 
+  ggtitle("Total Offense Rate for Municipalities with 2021 Zoning Reforms") + 
+  scale_x_continuous(breaks = 0:2100) + 
+  geom_line(aes(group=Agency.Name)) + 
+  geom_point(size=2)
+
+plot_only_reformed_cities <- plot_2
+
+plot_only_reformed_cities
+ggsave("Plots/plot_only_reformed_cities.png")
+
+#Re-ordering factor levels for the plot
+dat_2 <- dat_2 |>
+  mutate(reformed.cities = fct_relevel(reformed.cities, "Reform", after = Inf ))
+
+#Applying the same color - transparent gray - to the non-reformed group
+adjustcolor("grey", alpha.f = .2)
+myColors_2 <- c("#BEBEBE26", "red")
+names(myColors_2) <- levels(dat_2$reformed.cities)
+
+#Plot!
+plot_reformed_cities <- ggplot(dat_2, aes(year, Total.Crime.Rate, color=reformed.cities)) + 
+  scale_colour_manual(name = "Reform Cities",values = myColors_2) + 
+  geom_line(data = dat_2[dat_2$reformed.cities == "No reform",],aes(group=Agency.Name)) +
+  geom_line(data = dat_2[dat_2$reformed.cities == "Reform",],aes(group = Agency.Name)) +
+  geom_point(data = dat_2[dat_2$reformed.cities == "No reform",],aes(group=Agency.Name),size=2) + 
+  geom_point(data = dat_2[dat_2$reformed.cities == "Reform",],aes(group = Agency.Name), size = 2) + 
+  xlab("Year") + ylab("Total Offense Rate") + 
+  ggtitle("Total Offense Rate - Zoning Reform Municipalities") + 
+  scale_x_continuous(breaks = 0:2100) 
+plot_reformed_cities
+ggsave("Plots/plot_reformed_cities.png")
+plot_reformed_cities_scale <- plot_reformed_cities + ylim(NA,1000)
+plot_reformed_cities_scale
+ggsave("Plots/plot_reformed_cities_scale.png")
+
+
