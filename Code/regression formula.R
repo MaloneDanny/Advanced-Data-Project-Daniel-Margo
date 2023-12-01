@@ -7,6 +7,7 @@ library(broom)
 library(lmtest)
 library(stargazer)
 library(memisc)
+library(webshot)
 
 dat = read.csv("Combined Transformed Vars.csv")
 
@@ -156,6 +157,15 @@ stargazer(creg, creg2, creg10, type = "text", omit = c("year","State"))
 stargazer(creg14, creg3, creg12, type = "text", omit = c("year","State"))
 stargazer(creg15, creg4, creg11, type = "text", omit = c("year","State"))
 stargazer(creg16, creg5, creg13, type = "text", omit = c("year","State"))
+
+webshot(file = "crimerate.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/outv2.html")
+webshot(file = "propertyrate.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/out2v2.html")
+webshot(file = "personsrate.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/out3v2.html")
+webshot(file = "societyrate.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/out4v2.html")
+webshot(file = "changecrimerate.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/out5v2.html")
+webshot(file = "changepropertyrate.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/out6v2.html")
+webshot(file = "changepersonsrate.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/out7v2.html")
+webshot(file = "changesocietyrate.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/out8v2.html")
 
 #save the new .csv file containing the new transformations
 write_csv(dat4, file = "Combined Unemp Crime Housing V2")
