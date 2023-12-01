@@ -62,6 +62,11 @@ The scale in the prior plot is through off by some extreme rates (coming from sm
 ![This plot has scale limits in place.](Plots/plot_reformed_cities_scale.png)
 The above plots show an interesting split within the municipalities that enacted zoning reform. There are significant issues with the simultaneous lack and abundance of data: we have few years of crime data, and we have magnitudes more data for cities that did not enact zoning reform. We might narrow the focus down to comparing reform/non-reform cities that are geographically close to one another (identified via finding the minimal distance between spatial points), or, more generally, comparing the municipalities to their respective state trends. Within this more narrow focus, we will also want to look at the breakdown between offense types (social, property, persons) to see if there are any relationships or trends there.
 
+### . Econometric Analysis
+
+The time frame that zoning reform exists in is far too recent to make any inferences about the effect of zoning reform on crime.  However, we can describe the cities which have passed zoning reform and determine if they have a higher crime rate relative to cities which have not passed zoning reform.  This would be important to policy makers, because if zoning reform is associated with higher crime rates, it would follow that cities with high crime rates may also have more movements to enact zoning reform.  
+
+
 ### . Conclusions
 [*MEL note - bring up all the intersting things that we could do but cant because we were too early to this policy enaction. Sad, low energy*]
 
