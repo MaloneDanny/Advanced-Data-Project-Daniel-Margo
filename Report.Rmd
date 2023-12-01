@@ -85,3 +85,5 @@ Katyal, Neal K. “Architecture as Crime Control.” The Yale Law Journal, vol. 
 Meyersohn, Nathaniel. “The Invisible Laws that Lead to America’s Housing Crisis.” CNN Business. August 5, 2023. Available from: https://www.cnn.com/2023/08/05/business/single-family-zoning-laws/index.html.
 
 Othering & Belonging Institute. “Zoning Reform Tracker.” University of California, Berkely. Available from: https://belonging.berkeley.edu/zoning-reform-tracker.
+
+Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables. R package version 5.2.3. https://CRAN.R-project.org/package=stargazer

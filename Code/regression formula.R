@@ -167,5 +167,19 @@ webshot(file = "changepropertyrate.png", url = "file:///C:/Users/malon/OneDrive/
 webshot(file = "changepersonsrate.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/out7v2.html")
 webshot(file = "changesocietyrate.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/out8v2.html")
 
+stargazer(creg10, creg12, creg11, creg13, type = "html", omit = c("year","State"),
+          covariate.labels = c("Reform", "Unemployment Rate", "Mean Total Crime Rate (Agency)", "Mean Crime Rate Against Property (Agency",
+                             "Mean Crime Rate Against Persons (Agency)", "Mean Crime Rate Against Society (Agency)"),
+          dep.var.labels = c("Change in Total Crime Rate", "Change in Crime Against Property Rate", "Change in Crime Against Persons Rate",
+                             "Change in Crime Against Society Rate"), out = "Regression Outputs/htmls/finalregchange.html")
+stargazer(reg10, reg12, reg11, reg13, type = "html", omit = c("year","State"),
+          covariate.labels = c("Reform", "Unemployment Rate", "Mean Total Crime Rate (Agency)", "Mean Crime Rate Against Property (Agency",
+                             "Mean Crime Rate Against Persons (Agency)", "Mean Crime Rate Against Society (Agency)"),
+          dep.var.labels = c("Total Crime Rate", "Crime Against Property Rate", "Crime Against Persons Rate",
+                             "Crime Against Society Rate"), out = "Regression Outputs/htmls/finalreg.html")
+
+webshot(file = "Regression Outputs/pngs/finalreg.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/htmls/finalreg.html")
+webshot(file = "Regression Outputs/pngs/finalchangereg.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/htmls/finalregchange.html")
+
 #save the new .csv file containing the new transformations
 write_csv(dat4, file = "Combined Unemp Crime Housing V2")
