@@ -27,7 +27,8 @@ unemp2 = unemp|>
 unemp2$State = unemp2$Area_Name
 unemp2$State = toupper(unemp2$State)
 unemp3 = unemp2|>
-  select(State, Unemployment_rate_2020, Unemployment_rate_2021, Unemployment_rate_2022)|>
+  select(State,Unemployment_rate_2020,Unemployment_rate_2021,Unemployment_rate_2022)
+unnemp3 = unemp3|>
   pivot_longer(cols = Unemployment_rate_2020:Unemployment_rate_2022)|>
   rename(unemp.rate = value)|>
   separate_wider_delim(cols = name, delim = "_", names = c("a", "b", "c"))|>
@@ -137,23 +138,24 @@ summary(creg12) #reform on property crime w/ unemp.rate and mean property crime 
 summary(creg13) #reform on society crime w/ unemp.rate and mean society crime change
 
 #exports the results of all like regressions into a pleasant format
-stargazer(reg, reg2,reg6, reg10, type = "html", out = "out.html")
-stargazer(reg14, reg3, reg8, reg12, type = "html", out = "out2.html")
-stargazer(reg15, reg4, reg7, reg11, type = "html", out = "out3.html")
-stargazer(reg16, reg5, reg9, reg13, type = "html", out = "out4.html")
-stargazer(creg, creg2,creg6, creg10, type = "html", out = "out5.html")
-stargazer(creg14, creg3, creg8, creg12, type = "html", out = "out6.html")
-stargazer(creg15, creg4, creg7, creg11, type = "html", out = "out7.html")
-stargazer(creg16, creg5, creg9, creg13, type = "html", out = "out8.html")
+stargazer(reg, reg2,reg6, reg10, type = "html", out = "outv2.html" , omit = c("year","State"))
+stargazer(reg14, reg3, reg8, reg12, type = "html", out = "out2v2.html", omit = c("year","State"))
+stargazer(reg15, reg4, reg7, reg11, type = "html", out = "out3v2.html", omit = c("year","State"))
+stargazer(reg16, reg5, reg9, reg13, type = "html", out = "out4v2.html", omit = c("year","State"))
+stargazer(creg, creg2, creg10, type = "html", out = "out5v2.html", omit = c("year","State"))
+stargazer(creg14, creg3, creg12, type = "html", out = "out6v2.html", omit = c("year","State"))
+stargazer(creg15, creg4, creg11, type = "html", out = "out7v2.html", omit = c("year","State"))
+stargazer(creg16, creg5, creg13, type = "html", out = "out8v2.html", omit = c("year","State"))
 
 #displays the results of all like regressions into a pleasant format
-stargazer(reg, reg2,reg6, reg10, type = "text")
-stargazer(reg14, reg3, reg8, reg12, type = "text")
-stargazer(reg15, reg4, reg7, reg11, type = "text")
-stargazer(reg16, reg5, reg9, reg13, type = "text")
-stargazer(creg, creg2,creg6, creg10, type = "text")
-stargazer(creg14, creg3, creg8, creg12, type = "text")
-stargazer(creg15, creg4, creg7, creg11, type = "text")
-stargazer(creg16, creg5, creg9, creg13, type = "text")
+stargazer(reg, reg2,reg6, reg10, type = "text" , omit = c("year","State"))
+stargazer(reg14, reg3, reg8, reg12, type = "text", omit = c("year","State"))
+stargazer(reg15, reg4, reg7, reg11, type = "text", omit = c("year","State"))
+stargazer(reg16, reg5, reg9, reg13, type = "text", omit = c("year","State"))
+stargazer(creg, creg2, creg10, type = "text", omit = c("year","State"))
+stargazer(creg14, creg3, creg12, type = "text", omit = c("year","State"))
+stargazer(creg15, creg4, creg11, type = "text", omit = c("year","State"))
+stargazer(creg16, creg5, creg13, type = "text", omit = c("year","State"))
 
+#save the new .csv file containing the new transformations
 write_csv(dat4, file = "Combined Unemp Crime Housing V2")
