@@ -53,13 +53,21 @@ lower_48 = states |>
 qtm(lower_48)
 
 #Easy breezy map
-#Add on the crime stats info 
+#Add on the crime stats info and then make a map
 merged_states = left_join(lower_48, dat_8, by = c("NAME"= "State"))
 
-tm_shape(merged_states) + tm_polygons("change_crime", 
+tm_map <- tm_shape(merged_states) + tm_polygons("change_crime", 
                                       style = "cont",
-                                      midpoint = FALSE,
-                                      palette = "plasma") + 
-  tm_layout(legend.outside = TRUE)
+                                      midpoint = -10,
+                                      palette = "plasma",
+                                      title = "Rate Change",
+                                      legend.is.portrait = FALSE) + 
+  tm_layout(legend.outside = TRUE,
+            legend.outside.position = "bottom",
+            legend.title.size = .8,
+            main.title = "Percent Change in Mean Crime Rate, 2020-2022",
+            main.title.size = .9)
 tm_map
 tmap_save(tm_map, "States.png")
+
+
