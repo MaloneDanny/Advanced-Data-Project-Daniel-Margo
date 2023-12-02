@@ -62,4 +62,4 @@ tm_shape(merged_states) + tm_polygons("change_crime",
                                       palette = "plasma") + 
   tm_layout(legend.outside = TRUE)
 tm_map
-
+tmap_save(tm_map, "States.png")
