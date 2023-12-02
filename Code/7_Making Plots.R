@@ -24,16 +24,16 @@ crimedat = read.csv("Cleaned crime dataset, combined 2020-2022")
 dat_7 <- dat_6 |>
   group_by(State, year) |>
   summarise(meancrimerate = mean(Total.Crime.Rate),
-         meanpropertyrate = mean(Crimes.Property.Rate),
-         meanpersonrate = mean(Crimes.Persons.Rate),
-         meansocietyrate = mean(Crimes.Society.Rate))
+            meanpropertyrate = mean(Crimes.Property.Rate),
+            meanpersonrate = mean(Crimes.Persons.Rate),
+            meansocietyrate = mean(Crimes.Society.Rate))
 dat_8 <- dat_7 |>
   group_by(State) |>
   arrange(desc(year), .by_group = TRUE) |>
-  mutate(change_crime = 100 * ((meancrimerate/lag(meancrimerate, 2)) -1),
-         change_property = 100 * ((meanpropertyrate/lag(meanpropertyrate, 2)) -1),
-         change_person = 100 * ((meanpersonrate/lag(meanpersonrate, 2)) -1),
-         change_society = 100 * ((meansocietyrate/lag(meansocietyrate, 2)) -1)) |>
+  mutate(change_crime = 100 * ((lag(meancrimerate, 2)/meancrimerate) -1),
+         change_property = 100 * ((lag(meanpropertyrate, 2)/meanpropertyrate) -1),
+         change_person = 100 * ((lag(meanpersonrate, 2)/meanpersonrate) -1),
+         change_society = 100 * ((lag(meansocietyrate, 2)/meansocietyrate) -1)) |>
   filter(!is.na(change_crime)) |>
   select(-contains("mean"))
 
@@ -58,12 +58,14 @@ merged_states = left_join(lower_48, dat_8, by = c("NAME"= "State"))
 
 tm_map <- tm_shape(merged_states) + tm_polygons("change_crime", 
                                       style = "cont",
-                                      midpoint = -10,
-                                      palette = "plasma",
+                                      midpoint = 0,
+                                      breaks = c(-50,0,50,100,150),
+                                      palette = "-RdYlBu",
                                       title = "Rate Change",
                                       legend.is.portrait = FALSE) + 
   tm_layout(legend.outside = TRUE,
             legend.outside.position = "bottom",
+            legend.outside.size = .15,
             legend.title.size = .8,
             main.title = "Percent Change in Mean Crime Rate, 2020-2022",
             main.title.size = .9)
@@ -92,15 +94,46 @@ dat_9 <- dat_9 |>
 #Map showing population
 tm_map1 <-tm_shape(lower_48) + tm_polygons(alpha = .5, 
                                  col = "lightgrey") + 
-  tm_shape(dat_9) + tm_dots(col = "red",
+  tm_shape(dat_9) + tm_dots(col = "green",
                             size = "Population",
                             shape = 21,
-                            border.col="black",
+                            border.col="blue",
                             alpha =.75) + 
   tm_layout(legend.outside = TRUE,
+            legend.outside.size = .15,
             legend.title.size = .8,
             legend.outside.position = "bottom",
             main.title = "Cities with Zoning Reform, 2020-2021",
             main.title.size = .9)
 tm_map1
 tmap_save(tm_map1, "Cities_pop.png")
+
+#Map with population dots + showing total crime rate change
+#First, the code - similar process as above
+dat_10 <- dat_9 |>
+  group_by(Agency.Name, year) |>
+  summarise(meancrimerate = mean(Total.Crime.Rate))
+dat_11 <- dat_10 |>
+  group_by(Agency.Name) |>
+  arrange(desc(year), .by_group = TRUE) |>
+  mutate(change_crime = ((lag(meancrimerate, 2)/meancrimerate) - 1) * 100) |>
+  filter(!is.na(change_crime)) |>
+  select(-contains("mean"))
+
+tm_map2 <- tm_shape(lower_48) + tm_polygons(alpha = .5, 
+                                 col = "lightgrey") + 
+  tm_shape(dat_11) + tm_dots(col = "change_crime",
+                            size = 2,
+                            shape = 21,
+                            border.col="blue",
+                            alpha =.75,
+                            legend.is.portrait = FALSE,
+                            title = "Change in Mean Crime Rate, 2020-2022") + 
+  tm_layout(legend.outside = TRUE,
+            legend.outside.size = .15,
+            legend.title.size = 1,
+            legend.outside.position = "bottom",
+            main.title = "Cities with Zoning Reform, 2020-2021",
+            main.title.size = .9)
+tm_map2
+tmap_save(tm_map2, "Cities_ratechange.png")
