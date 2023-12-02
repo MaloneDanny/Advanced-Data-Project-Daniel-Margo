@@ -50,6 +50,8 @@ We created additional dummy variables which reported whether the city in questio
 
 ![](Plots/Cities_ratechange.png)
 
+![](Plots/States_heat.png)
+
 
 There are significant issues with the simultaneous lack and abundance of data: we have few years of crime data, and we have magnitudes more data for cities that did not enact zoning reform. 
 
