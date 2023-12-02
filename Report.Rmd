@@ -18,9 +18,11 @@ The current housing crisis has caused many cities, and even states, to either co
 ### II. Data Sources and Notes on Data Limitations
 
 \setlength\parindent{24pt}
-|      Our primary data comes from two sources: the FBI and the University of California, Berkely. We use the FBI’s crime data to observe crime at a state and city level for the years 2020-2022. This dataset has variables on population, total crime, and a further breakdown of types of crime (generally sorted into personal, social, and property). We then merge the University of California, Berkeley’s data on municipal-level zoning reform for the year 2021 onto this crime dataset. We also used secondary data sources to merge on state-wide zoning changes (Meyershohn). 
+|      Our primary data comes from two sources: the FBI and the University of California, Berkely. We use the FBI’s crime data to observe crime at a state and city level for the years 2020-2022. This dataset has variables on population, total crime, and a further breakdown of types of crime (generally sorted into personal, social, and property). We then merge the University of California, Berkeley’s data on municipal-level zoning reform for the year 2021 onto this crime dataset. We also used secondary data sources to merge on state-wide zoning changes (Meyershohn).  Unemployment data on a state-wide level was provided by the United States Department of Agriculture.
 
 Due to data limitations from the FBI dataset, we are restricted to the years 2020 to 2022. Furthermore, the Covid-19 pandemic deeply impacted the reporting at a state-wide level. For example, California does not have consistent data from 2020-2022. None of the cities in California report crime statistics for 2020. If we had additional years of crime data before the Covid-19 disruptions, we might have more options for dealing with the missing data (i.e. able to impute these missing values) . However, since our dataset is so limited, we had to exclude cities that had incomplete reporting data. After we filtered for having crime statistics in all three years, we are left with 44 states. We note that the distribution of cities within these states is not consistent. Some states, such as Michigan, are very well documented; while others, like Illinois and Pennsylvania have one and two reporting cities, respectively. Future research might look for more data, in order to better capture the prior trends, as well as look at the long-term impact of zoning changes. 
+
+Further, the crime statistics used are on a agency wide scale;  they are notably not using the more widely used FIPS code system.  This makes it difficult to append additional datasets for use as control data, since many datasets use FIPS codes, and are typically not on a city to city basis.  Additionally, since housing reform happened so recently, data for certain varibles which would have been useful as control variables, such as poverty rates and educational attainment, are simply not available.  The econometric analysis will therefore utilize state and year fixed effects to control for geographic variation.
 
 ### III. Data Cleaning
 
@@ -36,7 +38,7 @@ We then determined which cities had data for all three years of our event study 
 
 We also created variables which record the average crime rate for each agency, within the time frame of 2020 and 2022.  This was done so they may be used during econometric analysis as control variables.  This is because the areas which are receiving zoning reforms may be experiencing more crime than areas which are not receiving reforms, and including the average crime rate for each agency would control for differences in preexisting crime rates.  Additionally, variables which recorded the average crime rate for each sub-categories defined by the FBI (crime against persons, society and property) were also defined.  Variables which defined the change in crime rate for both total crime and each sub-category were also defined.
   
-We created additional dummy variables which reported whether the city in question had zoning reform in 2021, and whether a state in question had zoning reform in that year as well.  The average amount of crime across all cities in a state was also calculated and reported in a separate variable called “meanstatecrime”, and the average amount of crime for cities which had a zoning reform versus cities which did not have a zoning reform and reported that as total crime rate. [*MEL note - expand here as well*]a
+We created additional dummy variables which reported whether the city in question had zoning reform in 2021, and whether a state in question had zoning reform in that year as well.  The average amount of crime across all cities in a state was also calculated and reported in a separate variable called “meanstatecrime”, and the average amount of crime for cities which had a zoning reform versus cities which did not have a zoning reform and reported that as total crime rate. [*MEL note - expand here as well*]
 	
 ### V. Plots and Remarks
 [*MEL note - following end section to be heavily modified*]
@@ -64,13 +66,19 @@ The above plots show an interesting split within the municipalities that enacted
 
 ### . Econometric Analysis
 
-The time frame that zoning reform exists in is far too recent to make any inferences about the effect of zoning reform on crime.  However, we can describe the cities which have passed zoning reform and determine if they have a higher crime rate relative to cities which have not passed zoning reform.  This would be important to policy makers, because if zoning reform is associated with higher crime rates, it would follow that cities with high crime rates may also have more movements to enact zoning reform.  
+The time frame that zoning reform exists in is far too recent to make any inferences about the effect of zoning reform on crime.  However, we can describe the cities which have passed zoning reform and determine if they have a higher crime rate relative to cities which have not passed zoning reform.  This would be important to policy makers, because if zoning reform is associated with higher crime rates, it would follow that cities with high crime rates may also have more movements to enact zoning reform. It would also be useful to future researchers studying the effects of changes in zoning laws, as findings of significantly different crime rates and changes in crime rates would impact the efficiency of their analysis models.
 
-![](Data\Regression Outputs\pngs\finalreg.png)
+The regression formulas use 4 different dependent variables;  Total crime rate, crime rate against property, crime rate against persons and crime rate against society.  The dependent variables are subdivided in this manner to study the effect of zoning laws on the kinds of crimes which are committed.  The primary independent variable in question is reform, which is a dummy variable which indicates the presence of housing reform in that state or city.  The control variables used are the unemployment rate, the mean crime rate for each agency, which controls for a preexisting level of crime in each city, state fixed effects, and year fixed effects.  An identical set of regression formulas was run using the change in crime rates as the dependent variables as well.
 
+Crime Rate = Beta0 + Beta1(Reform) + Beta2(Unemployment Rate) + Beta3(City Mean Crime Rate) + Alpha(State Fixed Effects) 
+                  + Gamma(Year Fixed Effects) + E
+
+As the regressions show, there is no significant relationship between crime rates and zoning reform.  However, there is a significant relationship at the 95% confidence level between zoning reform and changes in property crime rates and the crimes against persons rate.  What this implies is the impetus for zoning reform may not be an existing level of crime, but cities where the crime rates for property crimes and crimes against persons increase sharply.  Movements for housing reform may therefore be associated with shocks in the crime rate.
 
 ### . Conclusions
-[*MEL note - bring up all the interesting things that we could do but cant because we were too early to this policy enaction. Sad, low energy*]
+
+Future studies when data of the effects of zoning reform is made available will be able to note that the environment of the different cities are defined by a difference in the change of crime rates.  This may make future studies which are relying on a difference in difference or event time model problematic, since the assumption of parallel preexisting trends may not hold up in these conditions. Researchers following up on this subject would do well to account for the different trends to ensure the accuracy of their findings.
+[*MEL note - bring up all the intersting things that we could do but cant because we were too early to this policy enaction. Sad, low energy*]
 
 ### . References
 
@@ -87,3 +95,7 @@ Katyal, Neal K. “Architecture as Crime Control.” The Yale Law Journal, vol. 
 Meyersohn, Nathaniel. “The Invisible Laws that Lead to America’s Housing Crisis.” CNN Business. August 5, 2023. Available from: https://www.cnn.com/2023/08/05/business/single-family-zoning-laws/index.html.
 
 Othering & Belonging Institute. “Zoning Reform Tracker.” University of California, Berkely. Available from: https://belonging.berkeley.edu/zoning-reform-tracker.
+
+Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables. R package version 5.2.3. https://CRAN.R-project.org/package=stargazer
+
+United States Department of Agriculture. (n.d.). County-level data sets. USDA ERS - County-level Data Sets. https://www.ers.usda.gov/data-products/county-level-data-sets/ 

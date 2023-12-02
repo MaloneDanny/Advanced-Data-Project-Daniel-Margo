@@ -53,7 +53,7 @@ dat3 = dat3|>
          meanpropertyrate = mean(Crimes.Property.Rate),
          meanpersonrate = mean(Crimes.Persons.Rate),
          meansocietyrate = mean(Crimes.Society.Rate))
-
+dat3$year = as.factor(dat3$year)
 #runs regressions, records the results, displays the results in the console
 reg = lm(Total.Crime.Rate ~ reform + State - 1 + year - 1, data = dat3)
 reg14 = lm(Crimes.Property.Rate ~ reform + State - 1 + year - 1, data = dat3)
@@ -90,6 +90,7 @@ summary(reg11) #reform on person crime w/ unemp.rate and mean person crime
 summary(reg12) #reform on property crime w/ unemp.rate and mean property crime
 summary(reg13) #reform on society crime w/ unemp.rate and mean society crime
 
+#saves the dataset as a .csv file, then reads it to make sure it worked
 write_csv(dat3, file = "Combined Unemp Crime Housing")
 dat3 = read_csv(file = "Combined Unemp Crime Housing")
 
@@ -101,6 +102,7 @@ dat4 = dat3|>
          changepropertyrate = Crimes.Property.Rate - laggedpropertyrate,
          changesocietyrate = Crimes.Society.Rate - laggedsocietyrate,
          changepersonsrate = Crimes.Persons.Rate - laggedpersonsrate)
+dat4$year = as.factor(dat4$year)
 
 #runs the regressions using change in crime rate as the dependant variable
 creg = lm(changecrimerate ~ reform + State - 1 + year - 1, data = dat4)
@@ -158,6 +160,7 @@ stargazer(creg14, creg3, creg12, type = "text", omit = c("year","State"))
 stargazer(creg15, creg4, creg11, type = "text", omit = c("year","State"))
 stargazer(creg16, creg5, creg13, type = "text", omit = c("year","State"))
 
+#generates .png files of each of the result tables
 webshot(file = "crimerate.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/outv2.html")
 webshot(file = "propertyrate.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/out2v2.html")
 webshot(file = "personsrate.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/out3v2.html")
@@ -167,19 +170,33 @@ webshot(file = "changepropertyrate.png", url = "file:///C:/Users/malon/OneDrive/
 webshot(file = "changepersonsrate.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/out7v2.html")
 webshot(file = "changesocietyrate.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/out8v2.html")
 
+#creates the final, more legible table sets, and saves them as .html files
 stargazer(creg10, creg12, creg11, creg13, type = "html", omit = c("year","State"),
           covariate.labels = c("Reform", "Unemployment Rate", "Mean Total Crime Rate (Agency)", "Mean Crime Rate Against Property (Agency",
                              "Mean Crime Rate Against Persons (Agency)", "Mean Crime Rate Against Society (Agency)"),
           dep.var.labels = c("Change in Total Crime Rate", "Change in Crime Against Property Rate", "Change in Crime Against Persons Rate",
-                             "Change in Crime Against Society Rate"), out = "Regression Outputs/htmls/finalregchange.html")
+                             "Change in Crime Against Society Rate"), out = "Regression Outputs/htmls/finalregchangev2.html")
 stargazer(reg10, reg12, reg11, reg13, type = "html", omit = c("year","State"),
           covariate.labels = c("Reform", "Unemployment Rate", "Mean Total Crime Rate (Agency)", "Mean Crime Rate Against Property (Agency",
                              "Mean Crime Rate Against Persons (Agency)", "Mean Crime Rate Against Society (Agency)"),
           dep.var.labels = c("Total Crime Rate", "Crime Against Property Rate", "Crime Against Persons Rate",
-                             "Crime Against Society Rate"), out = "Regression Outputs/htmls/finalreg.html")
+                             "Crime Against Society Rate"), out = "Regression Outputs/htmls/finalregv2.html")
 
-webshot(file = "Regression Outputs/pngs/finalreg.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/htmls/finalreg.html")
-webshot(file = "Regression Outputs/pngs/finalchangereg.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/htmls/finalregchange.html")
+#displays the regression tables to see what they look like
+stargazer(creg10, creg12, creg11, creg13, type = "text", omit = c("year","State"),
+          covariate.labels = c("Reform", "Unemployment Rate", "Mean Total Crime Rate (Agency)", "Mean Crime Rate Against Property (Agency",
+                               "Mean Crime Rate Against Persons (Agency)", "Mean Crime Rate Against Society (Agency)"),
+          dep.var.labels = c("Change in Total Crime Rate", "Change in Crime Against Property Rate", "Change in Crime Against Persons Rate",
+                             "Change in Crime Against Society Rate"))
+stargazer(reg10, reg12, reg11, reg13, type = "text", omit = c("year","State"),
+          covariate.labels = c("Reform", "Unemployment Rate", "Mean Total Crime Rate (Agency)", "Mean Crime Rate Against Property (Agency",
+                               "Mean Crime Rate Against Persons (Agency)", "Mean Crime Rate Against Society (Agency)"),
+          dep.var.labels = c("Total Crime Rate", "Crime Against Property Rate", "Crime Against Persons Rate",
+                             "Crime Against Society Rate"))
+
+#converts the final regression tables into .png format
+webshot(file = "Regression Outputs/pngs/finalregv2.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/htmls/finalregv2.html")
+webshot(file = "Regression Outputs/pngs/finalchangeregv2.png", url = "file:///C:/Users/malon/OneDrive/Documents/GitHub/Advanced-Data-Project-Daniel-Margo/Data/Regression%20Outputs/htmls/finalregchangev2.html")
 
 #save the new .csv file containing the new transformations
 write_csv(dat4, file = "Combined Unemp Crime Housing V2")
