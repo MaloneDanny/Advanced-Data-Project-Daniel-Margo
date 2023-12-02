@@ -10,6 +10,8 @@ library(tidyr)
 library(writexl)
 library(ggplot2)
 library(RColorBrewer)
+library(colorspace)
+library(tibble)
 library(sf)
 library(sp)
 library(tmap)
@@ -61,7 +63,7 @@ tm_map <- tm_shape(merged_states) + tm_polygons("change_crime",
                                       midpoint = 0,
                                       breaks = c(-50,0,50,100,150),
                                       palette = "-RdYlBu",
-                                      title = "Rate Change",
+                                      title = "Percent Change",
                                       legend.is.portrait = FALSE) + 
   tm_layout(legend.outside = TRUE,
             legend.outside.position = "bottom",
@@ -113,6 +115,7 @@ tmap_save(tm_map1, "Cities_pop.png")
 dat_10 <- dat_9 |>
   group_by(Agency.Name, year) |>
   summarise(meancrimerate = mean(Total.Crime.Rate))
+
 dat_11 <- dat_10 |>
   group_by(Agency.Name) |>
   arrange(desc(year), .by_group = TRUE) |>
@@ -128,7 +131,7 @@ tm_map2 <- tm_shape(lower_48) + tm_polygons(alpha = .5,
                             border.col="blue",
                             alpha =.75,
                             legend.is.portrait = FALSE,
-                            title = "Change in Mean Crime Rate, 2020-2022") + 
+                            title = "Percent Change in Mean Crime Rate, 2020-2022") + 
   tm_layout(legend.outside = TRUE,
             legend.outside.size = .15,
             legend.title.size = 1,
@@ -137,3 +140,28 @@ tm_map2 <- tm_shape(lower_48) + tm_polygons(alpha = .5,
             main.title.size = .9)
 tm_map2
 tmap_save(tm_map2, "Cities_ratechange.png")
+
+#Making a heatmap
+dat_9 <- dat_8 |>
+  select(-contains("year"))
+#Pivot longer
+dat_10 <- dat_9 |>
+  pivot_longer(
+    cols = "change_crime":"change_society",
+    names_to = "Percent_Change",
+    values_to = "value") |>
+  mutate(Percent_Change = str_remove_all(Percent_Change, "change_")) |>
+  mutate(Percent_Change = str_to_upper(Percent_Change))
+
+dat_10 <- dat_10 |>
+  filter(State != "PENNSYLVANIA")
+  
+ggplot(dat_10, aes(x = Percent_Change, y = State, fill = value)) +
+  geom_tile() + 
+  scale_fill_continuous_divergingx(palette = "-RdYlBu") +
+  ylab("State") + 
+  xlab("Percent Change in Rate") + 
+  theme(axis.text=element_text(size=5),
+        axis.title.x = element_text(size = 10),
+        axis.title.y = element_text(size = 10))
+
