@@ -70,4 +70,37 @@ tm_map <- tm_shape(merged_states) + tm_polygons("change_crime",
 tm_map
 tmap_save(tm_map, "States.png")
 
+#Easy breezy map number two
+#Do a quick map of all the cities that enacted zoning reform
+#Maybe do a quick population comparison
 
+#First get a dataframe with only the reform cities & convert to point layer
+dat_9 <- dat_6 |>
+  filter(!is.na(latitude)) |>
+  st_as_sf(coords = c("longitude", "latitude"), crs = "wgs84")
+dat_9 <- st_transform(dat_9, crs = 2163)
+#Checking that worked
+colnames(dat_9)
+qtm(dat_9)
+st_crs(dat_9)
+st_crs(lower_48)
+
+#Rename Pop variable
+dat_9 <- dat_9 |>
+  rename(Population = Population1)
+
+#Map showing population
+tm_map1 <-tm_shape(lower_48) + tm_polygons(alpha = .5, 
+                                 col = "lightgrey") + 
+  tm_shape(dat_9) + tm_dots(col = "red",
+                            size = "Population",
+                            shape = 21,
+                            border.col="black",
+                            alpha =.75) + 
+  tm_layout(legend.outside = TRUE,
+            legend.title.size = .8,
+            legend.outside.position = "bottom",
+            main.title = "Cities with Zoning Reform, 2020-2021",
+            main.title.size = .9)
+tm_map1
+tmap_save(tm_map1, "Cities_pop.png")
