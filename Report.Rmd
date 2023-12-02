@@ -43,6 +43,8 @@ We created additional dummy variables which reported whether the city in questio
 ### V. Plots and Remarks
 [*MEL note - following end section to be heavily modified*]
 
+![](Plots/States.png)
+
 The following plot charts the mean total offenses per all states in our final dataset for 2020-2022. 
 
 ![](Plots/plot_all_states.png)
@@ -70,8 +72,9 @@ The time frame that zoning reform exists in is far too recent to make any infere
 
 The regression formulas use 4 different dependent variables;  Total crime rate, crime rate against property, crime rate against persons and crime rate against society.  The dependent variables are subdivided in this manner to study the effect of zoning laws on the kinds of crimes which are committed.  The primary independent variable in question is reform, which is a dummy variable which indicates the presence of housing reform in that state or city.  The control variables used are the unemployment rate, the mean crime rate for each agency, which controls for a preexisting level of crime in each city, state fixed effects, and year fixed effects.  An identical set of regression formulas was run using the change in crime rates as the dependent variables as well.
 
-Crime Rate = Beta0 + Beta1(Reform) + Beta2(Unemployment Rate) + Beta3(City Mean Crime Rate) + Alpha(State Fixed Effects) 
-                  + Gamma(Year Fixed Effects) + E
+Crime Rate = Beta0 + Beta1(Reform) + Beta2(Unemployment Rate) + Beta3(City Mean Crime Rate) + Alpha(State Fixed Effects) + Gamma(Year Fixed Effects) + E
+
+![](Data/Regression Outputs/pngs/finalchangeregv2.png)
 
 As the regressions show, there is no significant relationship between crime rates and zoning reform.  However, there is a significant relationship at the 95% confidence level between zoning reform and changes in property crime rates and the crimes against persons rate.  What this implies is the impetus for zoning reform may not be an existing level of crime, but cities where the crime rates for property crimes and crimes against persons increase sharply.  Movements for housing reform may therefore be associated with shocks in the crime rate.
 
