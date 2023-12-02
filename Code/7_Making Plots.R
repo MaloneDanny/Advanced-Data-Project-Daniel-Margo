@@ -54,8 +54,9 @@ lower_48 = states |>
   filter(!STATE_ABBR %in% c("AK", "HI"))
 qtm(lower_48)
 
-#Easy breezy map
+#Easy breezy maps
 #Add on the crime stats info and then make a map
+#Map 1: Total Crime Rate Percent Change
 merged_states = left_join(lower_48, dat_8, by = c("NAME"= "State"))
 
 tm_map <- tm_shape(merged_states) + tm_polygons("change_crime", 
@@ -73,6 +74,90 @@ tm_map <- tm_shape(merged_states) + tm_polygons("change_crime",
             main.title.size = .9)
 tm_map
 tmap_save(tm_map, "States.png")
+
+#Removing PA as this outlier makes it difficult to read the other states
+merged_states_2 <- merged_states |>
+   filter(NAME != "PENNSYLVANIA")
+tm_map_b <- tm_shape(lower_48) + tm_polygons("grey") +
+  tm_shape(merged_states_2) + tm_polygons("change_crime", 
+                                                style = "cont",
+                                                midpoint = 0,
+                                                palette = "-RdYlBu",
+                                                title = "Percent Change",
+                                                legend.is.portrait = FALSE) + 
+  tm_layout(legend.outside = TRUE,
+            legend.outside.position = "bottom",
+            legend.outside.size = .15,
+            legend.title.size = .8,
+            main.title = "Percent Change in Mean Crime Rate, 2020-2022",
+            main.title.size = .9)
+tm_map_b
+tmap_save(tm_map_b, "States_noPA.png")
+
+#Map 2: Property Crime Rate Percent Change
+tm_map_1 <- tm_shape(merged_states) + tm_polygons("change_property", 
+                                                style = "cont",
+                                                midpoint = 0,
+                                                palette = "-RdYlBu",
+                                                title = "Percent Change",
+                                                legend.is.portrait = FALSE) + 
+  tm_layout(legend.outside = TRUE,
+            legend.outside.position = "bottom",
+            legend.outside.size = .15,
+            legend.title.size = .8,
+            main.title = "Percent Change in Mean Property Crime Rate, 2020-2022",
+            main.title.size = .9)
+tm_map_1
+tmap_save(tm_map_1, "States_Property.png")
+#Removing PA as this outlier makes it difficult to read to the other states
+tm_map_1b <- tm_shape(lower_48) + tm_polygons("grey") + 
+  tm_shape(merged_states_2) + tm_polygons("change_property", 
+                                                  style = "cont",
+                                                  midpoint = 0,
+                                                  palette = "-RdYlBu",
+                                                  title = "Percent Change",
+                                                  legend.is.portrait = FALSE) + 
+  tm_layout(legend.outside = TRUE,
+            legend.outside.position = "bottom",
+            legend.outside.size = .15,
+            legend.title.size = .8,
+            main.title = "Percent Change in Mean Property Crime Rate, 2020-2022",
+            main.title.size = .9)
+tm_map_1b
+tmap_save(tm_map_1b, "States_Property_noPA.png")
+
+#Map 3: Person Crime Rate Percent Change
+tm_map_2 <- tm_shape(merged_states) + tm_polygons("change_person", 
+                                                style = "cont",
+                                                midpoint = 0,
+                                                palette = "-RdYlBu",
+                                                title = "Percent Change",
+                                                legend.is.portrait = FALSE) + 
+  tm_layout(legend.outside = TRUE,
+            legend.outside.position = "bottom",
+            legend.outside.size = .15,
+            legend.title.size = .8,
+            main.title = "Percent Change in Mean Persons Crime Rate, 2020-2022",
+            main.title.size = .9)
+tm_map_2
+tmap_save(tm_map_2, "States_Person.png")
+
+#Removing PA as this outlier makes everything difficult to read
+tm_map_2b <- tm_shape(lower_48) + tm_polygons(col = "grey") +
+  tm_shape(merged_states_2) + tm_polygons("change_person", 
+                                                  style = "cont",
+                                                  midpoint = 0,
+                                                  palette = "-RdYlBu",
+                                                  title = "Percent Change",
+                                                  legend.is.portrait = FALSE) + 
+  tm_layout(legend.outside = TRUE,
+            legend.outside.position = "bottom",
+            legend.outside.size = .15,
+            legend.title.size = .8,
+            main.title = "Percent Change in Mean Persons Crime Rate, 2020-2022",
+            main.title.size = .9)
+tm_map_2b
+tmap_save(tm_map_2, "States_Person_noPA.png")
 
 #Easy breezy map number two
 #Do a quick map of all the cities that enacted zoning reform
@@ -149,19 +234,24 @@ dat_10 <- dat_9 |>
   pivot_longer(
     cols = "change_crime":"change_society",
     names_to = "Percent_Change",
-    values_to = "value") |>
+    values_to = "Percent") |>
   mutate(Percent_Change = str_remove_all(Percent_Change, "change_")) |>
   mutate(Percent_Change = str_to_upper(Percent_Change))
 
+#For ease of viewing the other states
 dat_10 <- dat_10 |>
   filter(State != "PENNSYLVANIA")
-  
-ggplot(dat_10, aes(x = Percent_Change, y = State, fill = value)) +
+
+#Create the ggplot
+plot <- ggplot(dat_10, aes(x = Percent_Change, y = State, fill = Percent)) +
   geom_tile() + 
   scale_fill_continuous_divergingx(palette = "-RdYlBu") +
   ylab("State") + 
   xlab("Percent Change in Rate") + 
   theme(axis.text=element_text(size=5),
         axis.title.x = element_text(size = 10),
-        axis.title.y = element_text(size = 10))
-
+        axis.title.y = element_text(size = 10),
+        legend.title = element_text(size=8),
+        legend.text = element_text(size=8))
+plot
+ggsave("States_heat.png", width = 4, height = 6)
