@@ -45,25 +45,33 @@ We created additional dummy variables which reported whether the city in questio
 The following map shows the percent change in mean total crime rate for the cities in all states (that we have data on) for 2020-2022. For ease of visibility, this is aggregated up to the state level. Note that Pennsylvania is a clear outlier. Given the above-noted issues with our data due to Covid-19 reporting issues, our following maps remove Pennsylvania for ease of visualy differentiating crime rate variation. Maps that include Pennsylvania are included in the Plots subfolder on Github.
 
 ![](Plots/States.png)
+
 The map below shows the percent change in mean crime rate but removes Pennsylvania. 
 
 ![](Plots/States_noPA.png)
+
 The following series of maps show the percent change in mean crime rates for crimes against persons and property. Note that all remove Pennsylvania for ease of visual variation.
 
 ![](Plots/States_Person_noPA.png)
+
 ![](Plots/States_Property_noPA.png)
+
 The following graphic reports the information shown in the above maps as a heatmap. 
 
 ![](Plots/States_heat.png)
+
 The cities that enacted zoning reform are concentrated in the Midwest and Atlantic regions. The map bellow shows these cities and their populations. Zoning reform is not necessarily driven population size: cities both large and small enacted reform in 2020 and 2021. 
 
 ![](Plots/Cities_pop.png)
+
 The map below shows the percent change in mean total crime rate for these cities. 
 
 ![](Plots/Cities_ratechange.png)
+
 Finally, the below scatter-plot shows the percent change in crime rate versus the change in population growth for all cities in our dataset. We changed the color scheme in this plot for visibility purposes: the light yellow was hard to make out. In general, population rate change has a negative relationship to total crime rate change. 
 
 ![](Plots/Cities_Scatter.png)
+
 As is clearly shown in the above graphics, our data is noisy. There are also quite a bit of extreme observations. Our data includes cities with quite low populations, and these cities can have large swings in crime rate (especially when crime rate is conventionally reported as per 1,000 people) and population change. The majority of the data is clustered around 0%, but the presence of these extreme observations make visualization tricky. 
 
 ### V.I. Econometric Analysis
