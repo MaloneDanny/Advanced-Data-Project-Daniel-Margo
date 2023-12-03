@@ -66,7 +66,7 @@ Finally, the below scatter-plot shows the percent change in crime rate versus th
 ![](Plots/Cities_Scatter.png)
 As is clearly shown in the above graphics, our data is noisy. There are also quite a bit of extreme observations. Our data includes cities with quite low populations, and these cities can have large swings in crime rate (especially when crime rate is conventionally reported as per 1,000 people) and population change. The majority of the data is clustered around 0%, but the presence of these extreme observations make visualization tricky. 
 
-### . Econometric Analysis
+### V.I. Econometric Analysis
 \setlength\parindent{24pt}
 |      The time frame that zoning reform exists in is far too recent to make any inferences about the effect of zoning reform on crime.  However, we can describe the cities which have passed zoning reform and determine if they have a higher crime rate relative to cities which have not passed zoning reform.  This would be important to policy makers, because if zoning reform is associated with higher crime rates, it would follow that cities with high crime rates may also have more movements to enact zoning reform. It would also be useful to future researchers studying the effects of changes in zoning laws, as findings of significantly different crime rates and changes in crime rates would impact the efficiency of their analysis models.
 
@@ -80,7 +80,7 @@ As the regressions show, there is no significant relationship between crime rate
 
 A notable issue with the model as shown is that the unemployment rate for each state decreases the estimated crime rate for each city.  Logically, a higher unemployment rate should be associated with a higher crime rate, so a negative coefficient for unemployment rate may indicate issues between it and the mean crime rate.  Perhaps the unemployment and mean crime rate are heavily correlated with each other, which leads to the confusing value for unemployment rate.
 
-### . Conclusions
+### V.II. Conclusions
 
 \setlength\parindent{24pt}
 |      There are significant issues with the simultaneous lack and abundance of data: we have few years of crime data, and we have magnitudes more data for cities that did not enact zoning reform. This is also a recent policy change, and the effects of zoning change are most likely lagged (due to the time constraints on building). This is an interesting area of analysis, but our work here looks at very preliminary data. Future work will have the luxury of more extensive data.
@@ -89,7 +89,7 @@ The issue of the Covid-19 year will still have significant impacts. The lack of 
 
 Future studies when data of the effects of zoning reform is made available will be able to note that the environment of the different cities are defined by a difference in the change of crime rates.  This may make future studies which are relying on a difference in difference or event time model problematic, since the assumption of parallel preexisting trends may not hold up in these conditions. Researchers following up on this subject would do well to account for the different trends to ensure the accuracy of their findings.
 
-### . References
+### V.III. References
 
 Anderson, James M., et al. “Reducing Crime by Shaping the Built Environment with Zoning: An Empirical Study of Los Angeles.” University of Pennsylvania Law Review, vol. 161, pp. 700-756. 
 
