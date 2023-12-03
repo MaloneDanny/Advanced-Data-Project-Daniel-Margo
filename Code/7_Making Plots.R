@@ -181,11 +181,10 @@ dat_9 <- dat_9 |>
 #Map showing population
 tm_map1 <-tm_shape(lower_48) + tm_polygons(alpha = .5, 
                                  col = "lightgrey") + 
-  tm_shape(dat_9) + tm_dots(col = "green",
+  tm_shape(dat_9) + tm_dots(col = "lightblue",
                             size = "Population",
                             shape = 21,
-                            border.col="blue",
-                            alpha =.75) + 
+                            border.col="darkblue") + 
   tm_layout(legend.outside = TRUE,
             legend.outside.size = .15,
             legend.title.size = .8,
@@ -211,6 +210,7 @@ dat_11 <- dat_10 |>
 tm_map2 <- tm_shape(lower_48) + tm_polygons(alpha = .5, 
                                  col = "lightgrey") + 
   tm_shape(dat_11) + tm_dots(col = "change_crime",
+                            palette = "-RdYlBu",
                             size = 2,
                             shape = 21,
                             border.col="blue",
@@ -226,11 +226,14 @@ tm_map2 <- tm_shape(lower_48) + tm_polygons(alpha = .5,
 tm_map2
 tmap_save(tm_map2, "Cities_ratechange.png")
 
-#Making a heatmap
-dat_9 <- dat_8 |>
+#Spatial data section done; following code chunks are not for maps
+
+#1. Making a heatmap for the states
+
+dat_12 <- dat_8 |>
   select(-contains("year"))
 #Pivot longer
-dat_10 <- dat_9 |>
+dat_13 <- dat_12 |>
   pivot_longer(
     cols = "change_crime":"change_society",
     names_to = "Percent_Change",
@@ -238,12 +241,12 @@ dat_10 <- dat_9 |>
   mutate(Percent_Change = str_remove_all(Percent_Change, "change_")) |>
   mutate(Percent_Change = str_to_upper(Percent_Change))
 
-#For ease of viewing the other states
-dat_10 <- dat_10 |>
+#For ease of actually viewing variation in the other states
+dat_14 <- dat_14 |>
   filter(State != "PENNSYLVANIA")
 
-#Create the ggplot
-plot <- ggplot(dat_10, aes(x = Percent_Change, y = State, fill = Percent)) +
+#Create the ggplot - heatmap
+plot <- ggplot(dat_14, aes(x = Percent_Change, y = State, fill = Percent)) +
   geom_tile() + 
   scale_fill_continuous_divergingx(palette = "-RdYlBu") +
   ylab("State") + 
@@ -255,3 +258,47 @@ plot <- ggplot(dat_10, aes(x = Percent_Change, y = State, fill = Percent)) +
         legend.text = element_text(size=8))
 plot
 ggsave("States_heat.png", width = 4, height = 6)
+
+#2. Creating a scatterplot for the cities - pop. vs rate change
+
+#Generate percent rate changes, same as prior process
+#Group by agency, aggregate up to total mean crime rate stats + calculate rate change
+dat_15 <- dat_6 |>
+  group_by(Agency.Name, State, year) |>
+  summarise(meancrimerate = mean(Total.Crime.Rate),
+            meanpropertyrate = mean(Crimes.Property.Rate),
+            meanpersonrate = mean(Crimes.Persons.Rate),
+            meansocietyrate = mean(Crimes.Society.Rate),
+            ave_population = mean(Population1))
+  
+dat_16 <- dat_15 |>
+  group_by(Agency.Name, State) |>
+  arrange(desc(year), .by_group = TRUE) |>
+  mutate(change_crime = 100 * ((lag(meancrimerate, 2)/meancrimerate) -1),
+         change_property = 100 * ((lag(meanpropertyrate, 2)/meanpropertyrate) -1),
+         change_person = 100 * ((lag(meanpersonrate, 2)/meanpersonrate) -1),
+         change_society = 100 * ((lag(meansocietyrate, 2)/meansocietyrate) -1),
+         pop_change = 100 * ((lag(ave_population, 2)/ave_population) -1))
+dat_16 <- dat_16 |>  
+  filter(change_crime != 100 & change_crime != -100 & change_crime != "Inf") |>
+  filter(change_property != 100 & change_property != -100 & change_property != "Inf") |>
+  filter(change_person != 100 & change_person != -100 & change_person != "Inf") |>
+  filter(change_society != 100 & change_society != -100 & change_society != "Inf") |>
+  select(-contains("mean"))
+
+plot_1 <- ggplot(dat_16, aes(x=pop_change, y=change_crime, color=change_crime)) + 
+  geom_point() + 
+  scale_color_continuous_divergingx("-RdYlBu") + 
+  xlab("Population Change") + 
+  ylab("Change in Crime Rate") + 
+  labs(title = "Population Change vs. Crime Rate Change, 2020-2022",
+       color = "Percent") + 
+  theme(axis.text=element_text(size=5),
+        axis.title.x = element_text(size = 10),
+        axis.title.y = element_text(size = 10),
+        legend.title = element_text(size=8),
+        legend.text = element_text(size=8),
+        plot.title = element_text(size = 11))
+ggsave("Cities_Scatter.png", width = 5.5, height = 4)
+
+
