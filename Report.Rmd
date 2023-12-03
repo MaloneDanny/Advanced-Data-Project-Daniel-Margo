@@ -4,7 +4,7 @@ author: "Daniel Malone and Margo La Clair"
 output: pdf_document
 fontsize: 12pt
 geometry: margin=1in
-date: "2023-11-30"
+date: "2023-12-03"
 ---
 ### I. Topic
 
@@ -27,7 +27,7 @@ Further, the crime statistics used are on a agency wide scale;  they are notably
 ### III. Data Cleaning
 
 \setlength\parindent{24pt}
-|      The data cleaning processes consisted of merging the three years of FBI data and converting it into tidy format.  Of particular note is the FBI statistics for the year 2022, which was formatted slightly differently from the 2021 and 2020 data sets.  [*MEL note - track down this information to see WHY*]. All the information was in the right place, so to speak, but there were unseen differences between the column names of the datasets, and some of the labels were a row above their location in the other datasets, which created a small challenge when merging.  This was resolved by manually entering the offending names to the correct location and then setting the column names of the 2022 dataset equal to the column names of the larger 2021-2020 dataset, and then merging.
+|      The data cleaning processes consisted of merging the three years of FBI data and converting it into tidy format.  Of particular note is the FBI statistics for the year 2022, which was formatted slightly differently from the 2021 and 2020 data sets. All the information was in the right place, so to speak, but there were unseen differences between the column names of the datasets, and some of the labels were a row above their location in the other datasets, which created a small challenge when merging.  This was resolved by manually entering the offending names to the correct location and then setting the column names of the 2022 dataset equal to the column names of the larger 2021-2020 dataset, and then merging.
 
 We then determined which cities had data for all three years of our event study and filtering for only those cities. We then merged on the zoning data, which we had cleaned. Due to the comparatively low number of cities who passed zoning reform in 2021, we were able to visually inspect the University of California, Berkeley's summaries to ensure that these laws involved the loosening of zoning - not increasing zoning restrictions. This merged file comprises our master dataset. Then, we merged on data on state-wide zoning changes to our master dataset. Only Oregon and Maine passed state-wide zoning reforms during our limited time span: Oregon in 2021 and Maine in 2022. We recognize that, without 2023 data, we cannot really form any conclusions about the impact of this reform in Maine. 
   
@@ -36,30 +36,41 @@ We then determined which cities had data for all three years of our event study 
 \setlength\parindent{24pt}
 |      We created a log transformed variable for the population per city.  This was done to avoid heavy skew in the case, as the range of populations per city in the United States can vary from the hundreds to the millions and, naturally, have varying numbers of criminal citations.  To avoid problems in interpreting the data visually, we created an additional variable which log-transformed population.  It is easier to interpret crime per capita rather than total numbers of citations in a city, so we created additional variables which calculated the total, property, personal and societal crime per capita, as well as multiplying these values by 1,000 to report the crime rate per 1,000 people. Some of the municipalities in our dataset have very low populations, so there are some extreme outliers for these calculations.  
 
-We also created variables which record the average crime rate for each agency, within the time frame of 2020 and 2022.  This was done so they may be used during econometric analysis as control variables.  This is because the areas which are receiving zoning reforms may be experiencing more crime than areas which are not receiving reforms, and including the average crime rate for each agency would control for differences in preexisting crime rates.  Additionally, variables which recorded the average crime rate for each sub-categories defined by the FBI (crime against persons, society and property) were also defined.  Variables which defined the change in crime rate for both total crime and each sub-category were also defined.
-  
-We created additional dummy variables which reported whether the city in question had zoning reform in 2021, and whether a state in question had zoning reform in that year as well.  The average amount of crime across all cities in a state was also calculated and reported in a separate variable called “meanstatecrime”, and the average amount of crime for cities which had a zoning reform versus cities which did not have a zoning reform and reported that as total crime rate. [*MEL note - expand here as well*]
+We also created variables which record the average total crime rate for each agency and state. For the state-level variables, we averaged across the cities in that state. This was done so they may be used during econometric analysis as dependent variables, as well as for the graphics.  The cities enacting zoning reforms may be experiencing more crime than areas which are not receiving reforms, and including the average crime rate for each agency would control for differences in preexisting crime rates.  Additionally, variables which recorded the average crime rate for each sub-categories defined by the FBI (crime against persons, society and property) were similarly generated.  
+
+We created additional dummy variables which reported whether the city in question had zoning reform in 2021, and whether a state in question had zoning reform in that year as well.  
 	
 ### V. Plots and Remarks
-[*MEL note - following end section to be heavily modified*]
+
+The following map shows the percent change in mean total crime rate for the cities in all states (that we have data on) for 2020-2022. For ease of visibility, this is aggregated up to the state level. Note that Pennsylvania is a clear outlier. Given the above-noted issues with our data due to Covid-19 reporting issues, our following maps remove Pennsylvania for ease of visualy differentiating crime rate variation. Maps that include Pennsylvania are included in the Plots subfolder on Github.
 
 ![](Plots/States.png)
+The map below shows the percent change in mean crime rate but removes Pennsylvania. 
 
-![](Plots/Cities_pop.png)
+![](Plots/States_noPA.png)
+The following series of maps show the percent change in mean crime rates for crimes against persons and property. Note that all remove Pennsylvania for ease of visual variation.
 
-
-![](Plots/Cities_ratechange.png)
+![](Plots/States_Person_noPA.png)
+![](Plots/States_Property_noPA.png)
+The following graphic reports the information shown in the above maps as a heatmap. 
 
 ![](Plots/States_heat.png)
+The cities that enacted zoning reform are concentrated in the Midwest and Atlantic regions. The map bellow shows these cities and their populations. Zoning reform is not necessarily driven population size: cities both large and small enacted reform in 2020 and 2021. 
 
+![](Plots/Cities_pop.png)
+The map below shows the percent change in mean total crime rate for these cities. 
 
-There are significant issues with the simultaneous lack and abundance of data: we have few years of crime data, and we have magnitudes more data for cities that did not enact zoning reform. 
+![](Plots/Cities_ratechange.png)
+Finally, the below scatter-plot shows the percent change in crime rate versus the change in population growth for all cities in our dataset. We changed the color scheme in this plot for visibility purposes: the light yellow was hard to make out. In general, population rate change has a negative relationship to total crime rate change. 
+
+![](Plots/Cities_Scatter.png)
+As is clearly shown in the above graphics, our data is noisy. There are also quite a bit of extreme observations. Our data includes cities with quite low populations, and these cities can have large swings in crime rate (especially when crime rate is conventionally reported as per 1,000 people) and population change. The majority of the data is clustered around 0%, but the presence of these extreme observations make visualization tricky. 
 
 ### . Econometric Analysis
 \setlength\parindent{24pt}
 |      The time frame that zoning reform exists in is far too recent to make any inferences about the effect of zoning reform on crime.  However, we can describe the cities which have passed zoning reform and determine if they have a higher crime rate relative to cities which have not passed zoning reform.  This would be important to policy makers, because if zoning reform is associated with higher crime rates, it would follow that cities with high crime rates may also have more movements to enact zoning reform. It would also be useful to future researchers studying the effects of changes in zoning laws, as findings of significantly different crime rates and changes in crime rates would impact the efficiency of their analysis models.
 
-The regression formulas use 4 different dependent variables;  Total crime rate, crime rate against property, crime rate against persons and crime rate against society. These values are reported as the number of crimes committed per 1000 people in the agency.  The dependent variables are subdivided in this manner to study the effect of zoning laws on the kinds of crimes which are committed.  The primary independent variable in question is reform, which is a dummy variable which indicates the presence of housing reform in that state or city.  The control variables used are the unemployment rate, the mean crime rate for each agency, which controls for a preexisting level of crime in each city, state fixed effects, and year fixed effects.  An identical set of regression formulas was run using the change in crime rates as the dependent variables as well.
+The regression formulas use 4 different dependent variables: total crime rate, crime rate against property, crime rate against persons and crime rate against society. These values are reported as the number of crimes committed per 1,000 people in the agency.  The dependent variables are subdivided in this manner to study the effect of zoning laws on the kinds of crimes which are committed.  The primary independent variable in question is reform, which is a dummy variable which indicates the presence of housing reform in that state or city.  The control variables used are the unemployment rate, the mean crime rate for each agency, which controls for a preexisting level of crime in each city, state fixed effects, and year fixed effects.  An identical set of regression formulas was run using the change in crime rates as the dependent variables as well.
 
 Crime Rate = Beta0 + Beta1(Reform) + Beta2(Unemployment Rate) + Beta3(City Mean Crime Rate) + Alpha(State Fixed Effects) + Gamma(Year Fixed Effects) + E
 
@@ -72,8 +83,11 @@ A notable issue with the model as shown is that the unemployment rate for each s
 ### . Conclusions
 
 \setlength\parindent{24pt}
-|      Future studies when data of the effects of zoning reform is made available will be able to note that the environment of the different cities are defined by a difference in the change of crime rates.  This may make future studies which are relying on a difference in difference or event time model problematic, since the assumption of parallel preexisting trends may not hold up in these conditions. Researchers following up on this subject would do well to account for the different trends to ensure the accuracy of their findings.
-[*MEL note - bring up all the intersting things that we could do but cant because we were too early to this policy enaction. Sad, low energy*]
+|      There are significant issues with the simultaneous lack and abundance of data: we have few years of crime data, and we have magnitudes more data for cities that did not enact zoning reform. This is also a recent policy change, and the effects of zoning change are most likely lagged (due to the time constraints on building). This is an interesting area of analysis, but our work here looks at very preliminary data. Future work will have the luxury of more extensive data.
+
+The issue of the Covid-19 year will still have significant impacts. The lack of consistently reported crime data during those years do present some serious difficulties. 
+
+Future studies when data of the effects of zoning reform is made available will be able to note that the environment of the different cities are defined by a difference in the change of crime rates.  This may make future studies which are relying on a difference in difference or event time model problematic, since the assumption of parallel preexisting trends may not hold up in these conditions. Researchers following up on this subject would do well to account for the different trends to ensure the accuracy of their findings.
 
 ### . References
 
