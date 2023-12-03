@@ -242,13 +242,13 @@ dat_13 <- dat_12 |>
   mutate(Percent_Change = str_to_upper(Percent_Change))
 
 #For ease of actually viewing variation in the other states
-dat_14 <- dat_14 |>
+dat_14 <- dat_13 |>
   filter(State != "PENNSYLVANIA")
 
 #Create the ggplot - heatmap
 plot <- ggplot(dat_14, aes(x = Percent_Change, y = State, fill = Percent)) +
   geom_tile() + 
-  scale_fill_continuous_divergingx(palette = "-RdYlBu") +
+  scale_fill_continuous_divergingx(palette = "RdYlBu", trans="reverse") +
   ylab("State") + 
   xlab("Percent Change in Rate") + 
   theme(axis.text=element_text(size=5),
@@ -288,7 +288,7 @@ dat_16 <- dat_16 |>
 
 plot_1 <- ggplot(dat_16, aes(x=pop_change, y=change_crime, color=change_crime)) + 
   geom_point() + 
-  scale_color_continuous_divergingx("-RdYlBu") + 
+  scale_color_continuous(low="lightblue", high="red") +
   xlab("Population Change") + 
   ylab("Change in Crime Rate") + 
   labs(title = "Population Change vs. Crime Rate Change, 2020-2022",
@@ -298,7 +298,9 @@ plot_1 <- ggplot(dat_16, aes(x=pop_change, y=change_crime, color=change_crime)) 
         axis.title.y = element_text(size = 10),
         legend.title = element_text(size=8),
         legend.text = element_text(size=8),
-        plot.title = element_text(size = 11))
+        legend.position = "bottom",
+        plot.title = element_text(size = 11)) + 
+  guides(colour = guide_colourbar(barwidth=10, label.position = "bottom"))
 ggsave("Cities_Scatter.png", width = 5.5, height = 4)
 
 
