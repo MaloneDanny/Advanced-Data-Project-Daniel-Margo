@@ -63,13 +63,22 @@ changepropertyplot = ggplot(plotdat)+
 
 
 totalcrimeplot
+ggsave(file = "Plots/Total Crime Reform.png")
 changetotalplot
+ggsave(file = "Plots/Change Total Crime Reform Plot.png", plot = changetotalplot)
 societycrimeplot
+ggsave(file = "Plots/Total Society Reform Plot.png", plot = societycrimeplot)
 changesocietyplot
+ggsave(file = "Plots/Change Society Crime Reform Plot.png", plot = changesocietyplot)
 personscrimeplot
+ggsave(file = "Plots/Total Persons Reform Plot.png", plot = personscrimeplot)
 changepersonsrate
+ggsave(file = "Plots/Change Persons Crime Reform Plot.png", plot = changepersonsrate)
 propertycrimeplot
+ggsave(file = "Plots/Property Crime Reform Plot.png", plot = propertycrimeplot)
 changepropertyplot
+ggsave(file = "Plots/Change Property Crime Reform Plot.png", plot = changepropertyplot)
+
 
 ggsave(file = "Plots/TotalCrimeReform.png", plot = totalcrimeplot)
 ggsave(file = "Plots/ChangeTotalCrimeReformPlot.png", plot = changetotalplot)
